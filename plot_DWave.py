@@ -66,17 +66,3 @@ fig.legend(title = 'Annealing time = $250$ $\mu$$s$, $3996$ reads', loc='upper c
 fig.subplots_adjust(top=0.68)
 
 fig.savefig("DW_trains.pdf")
-exit()
-
-# rerouting
-
-non_feasible_css = [3., 3.5, 4.]
-non_feasible_ens = [-8.05, -7.7, -8.35]
-feasible_css = [4.5]
-feasible_ens = [-9.6]
-ground = -10.1
-
-title = "annealing t = 250 μs, 3996 runs, rerouting"
-
-plotD_Wave("plots/DW_rerouting.pdf", title, non_feasible_css,
-           non_feasible_ens, feasible_css, feasible_ens, ground)
