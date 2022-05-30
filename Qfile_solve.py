@@ -50,7 +50,7 @@ def hybrid_anneal(method):
 
 if __name__ == "__main__":
 
-    annealing = 'simulated'
+    annealing = 'hybrid'
     num_reads = 3996
     annealing_time = 250
 
