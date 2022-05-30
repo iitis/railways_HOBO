@@ -3,6 +3,8 @@
 import pickle as pk
 import numpy as np
 from railway_solvers import earliest_dep_time, indexing4qubo, make_Q
+import os
+Q_file_exists = os.path.isdir('files/Qfile.npz')
 
 
 def energy(v, Q):
@@ -94,7 +96,7 @@ d_max = 10
 
 #####   Q matrix generation #########
 
-if False:
+if Q_file_exists == False:
     p_sum = 2.5
     p_pair = 1.25
     p_pair_qubic = 1.25
@@ -127,7 +129,7 @@ if True:
         visualise_Qubo_solution(solution, timetable, train_sets, d_max)
     print(" ##########   done  DW  results  ###################")
 
-#####  D-Wave output  rerouted ######
+#####  D-Wave output rerouted ######
 
 if True:
     for i in [3, 3.5, 4, 4.5]:
