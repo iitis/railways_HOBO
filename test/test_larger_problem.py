@@ -1,17 +1,9 @@
 import pytest
-
 from railway_solvers import *
 
 
-def energy(v, Q):
-    if -1 in v:
-        v = [(y + 1) / 2 for y in v]
-    X = np.array(Q)
-    V = np.array(v)
-    return V @ X @ V.transpose()
 
-
-def test_5_trains_all_cases():
+def test_5_trains_all_Js():
     """
     We have the following trains: 21,22,23,24,25
     and stations: A,B,C,D    [  ] - corresponds to the platform
@@ -95,9 +87,7 @@ def test_5_trains_all_cases():
             ],
             "D": [{24: "in", 25: "out"}],
         },
-        "add_swithes_at_s": []  # it adss automatically swithes at stations in
-        # bracket if two trains are in "Jtrack"
-        # if empty or no performs no action
+        "add_swithes_at_s": []  # we do not add aotomatically switches in thie example
     }
 
     d_max = 10
@@ -112,10 +102,8 @@ def test_5_trains_all_cases():
                p_qubic
                )
 
-    # np.savez("test/files/Qfile_5trains.npz", Q=Q)
 
     sol = np.load("test/files/solution_5trains.npz")
 
-    # offset = (2*3+1+2)*2.5 = -22.5
-
-    assert energy(sol, Q) == pytest.approx(-22.5 + 1.01)
+    offset = -(2*3+1+2)*2.5
+    assert energy(sol, Q) == pytest.approx(offset + 1.01)

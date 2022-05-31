@@ -136,6 +136,8 @@ def earliest_dep_time(S, timetable, train, station):
 
 def not_the_same_rolling_stock(j, jp, train_sets):
     """checks if two trains (j, jp) are not served by the same rolling stock"""
+    if "Jround" not in train_sets:
+        return True
     for s in train_sets["Jround"].keys():
         if occurs_as_pair(j, jp, train_sets["Jround"][s]):
             return False
@@ -237,3 +239,11 @@ def are_two_trains_entering_via_the_same_switches(train_sets, s, j, jp):
             return False
     else:
         return False
+
+
+def energy(v, Q):
+    if -1 in v:
+        v = [(y + 1) / 2 for y in v]
+    X = np.array(Q)
+    V = np.array(v)
+    return V @ X @ V.transpose()

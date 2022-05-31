@@ -102,3 +102,9 @@ def test_helpers_of_train_sets():
 
     assert can_MO_on_line(1, 3, "B", train_sets) == True
     assert can_MO_on_line(1, 2, "B", train_sets) == True
+
+
+def test_energy_computation():
+    v = [-1, 1, 1]
+    Q = [[1. for _ in range(3)] for _ in range(3)]
+    assert energy(v, Q) == 4.

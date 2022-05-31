@@ -24,7 +24,7 @@ for i, route in enumerate([ 'Default', 'Rerouting' ]):
         elif route == 'Rerouting':
             with open(f"files/dwave_data/Qfile_samples_sol_real-anneal_numread3996_antime250_chainst{cs}_r", 'rb') as fp:
                 x = pickle.load(fp)
-        
+
         non_feasible_def['en'].append(x[0][1])
         non_feasible_def['cs'].append(cs)
 
@@ -65,4 +65,4 @@ fig.text(0.05, 0.42, 'Minimum energy', va='center', rotation='vertical', fontsiz
 fig.legend(title = 'Annealing time = $250$ $\mu$$s$, $3996$ reads', loc='upper center',  borderaxespad=2.9, ncol=2, title_fontsize = 12, fontsize = 12)
 fig.subplots_adjust(top=0.68)
 
-fig.savefig("DW_trains.pdf")
+fig.savefig("plots/DW_trains.pdf")

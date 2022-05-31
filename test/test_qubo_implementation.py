@@ -5,34 +5,6 @@ from railway_solvers import *
 # testing particular QUBO element creation
 
 
-def energy(v, Q):
-    if -1 in v:
-        v = [(y+1)/2 for y in v]
-    X = np.array(Q)
-    V = np.array(v)
-    return V @ X @ V.transpose()
-
-
-def visualise_Qubo_solution(solution, timetable, train_sets, d_max):
-    inds, q_bits = indexing4qubo(train_sets, d_max)
-    l = q_bits
-    print("x vars", l)
-
-    S = train_sets["Paths"]
-    for i in range(l):
-        if solution[i] == 1:
-            j = inds[i]["j"]
-            s = inds[i]["s"]
-            d = inds[i]["d"]
-            t = d + earliest_dep_time(S, timetable, j, s)
-            print("train", j, "station", s, "delay", d, "time", t)
-
-def test_helpers():
-    v = [-1, 1, 1]
-    Q = [[1. for _ in range(3)] for _ in range(3)]
-    assert energy(v, Q) == 4.
-
-
 
 def test_pspan_pstay_p1track():
 
@@ -61,10 +33,7 @@ def test_pspan_pstay_p1track():
         "Paths": {0: ["A", "B"], 1: ["A", "B"], 2: ["B", "A"]},
         "J": [0, 1, 2],
         "Jd": {"A": {"B": [[0, 1]]}, "B": {"A": [[2]]}},
-        "Josingle": dict(),
-        "Jround": dict(),
-        "Jtrack": {"B": [[0, 1]]},
-        "Jswitch": dict()
+        "Jtrack": {"B": [[0, 1]]}
     }
 
     inds, q_bits = indexing4qubo(train_sets, 10)
@@ -109,11 +78,8 @@ def test_pspan_pstay_p1track():
         "skip_station": {2: "A"},
         "Paths": {0: ["A", "B"], 1: ["A", "B"], 2: ["B", "A"]},
         "J": [0, 1, 2],
-        "Jd": dict(),
         "Josingle": {("A", "B"): [[1,2]]},
-        "Jround": dict(),
-        "Jtrack": {"B": [[0, 1]]},
-        "Jswitch": dict()
+        "Jtrack": {"B": [[0, 1]]}
     }
 
     # test penalties for deadlock
@@ -217,8 +183,7 @@ def test_rolling_stock_circulation():
         "Jd": dict(),
         "Josingle": dict(),
         "Jround": {"B": [[0,1]]},
-        "Jtrack": dict(),
-        "Jswitch": dict()
+        "Jtrack": dict()
     }
 
     taus = {"pass": {"0_A_B": 4, "1_B_A": 8}, "prep": {"1_B": 2}}
@@ -283,8 +248,7 @@ def test_qubic():
         "Jd": dict(),
         "Josingle": {("A", "B"): [[1,2]]},
         "Jround": dict(),
-        "Jtrack": {"B": [[0, 1]]},
-        "Jswitch": {"A": [{1:"out", 2:"in"}], "B": [{1:"in", 2:"out"}]}
+        "Jtrack": {"B": [[0, 1]]}
     }
 
     inds, q_bits = indexing4qubo(train_sets, 10)
@@ -610,39 +574,42 @@ def test_circ_Qmat():
 
 
 
-def test_performing_Qmat():
-    #####   dispatching problem that was solved on D-Wave   ########
+def test_DWave_Qmat():
+    #### particular problem solved on the DWave ######
+
     """
-                                            <- 2
+                                            <- j3
     ...............................................
-     [ A ]                              . .    [ B ]
+     [ S1 ]                             .   .   [ S2 ]
     .....................................c.........
-    0 ->
-    1 ->
+    j1 ->
+    j2 ->
     """
 
-    taus = {"pass": {"0_A_B": 4, "1_A_B": 8, "2_B_A": 8},
-            "headway": {"0_1_A_B": 2, "1_0_A_B": 6},
-            "stop": {"0_B": 1, "1_B": 1},
+    taus = {"pass": {"j1_S1_S2": 4, "j2_S1_S2": 8, "j3_S2_S1": 8},
+            "headway": {"j1_j2_S1_S2": 2, "j2_j1_S1_S2": 6},
+            "stop": {"j1_S2": 1, "j2_S2": 1},
             "res": 1
             }
 
     timetable = {"tau": taus,
-                 "initial_conditions": {"0_A": 4, "1_A": 1, "2_B": 8},
-                 "penalty_weights": {"0_A": 2, "1_A": 1, "2_B": 1}}
+                 "initial_conditions": {"j1_S1": 4, "j2_S1": 1, "j3_S2": 8},
+                 "penalty_weights": {"j1_S1": 2, "j2_S1": 1, "j3_S2": 1}}
 
     d_max = 10
 
     train_sets = {
-        "skip_station": {2: "A"},
-        "Paths": {0: ["A", "B"], 1: ["A", "B"], 2: ["B", "A"]},
-        "J": [0, 1, 2],
-        "Jd": {"A": {"B": [[0, 1]]}, "B": {"A": [[2]]}},
+        "skip_station": {
+            "j3": "S1",  # we do not count train j3 leaving S1
+        },
+        "Paths": {"j1": ["S1", "S2"], "j2": ["S1", "S2"], "j3": ["S2", "S1"]},
+        "J": ["j1", "j2", "j3"],
+        "Jd": {"S1": {"S2": [["j1", "j2"]]}, "S2": {"S1": [["j3"]]}},
         "Josingle": dict(),
         "Jround": dict(),
-        "Jtrack": {"B": [[0, 1]]},
+        "Jtrack": {"S2": [["j1", "j2"]]},
         "Jswitch": dict(),
-        "add_swithes_at_s": ["B"]
+        "add_swithes_at_s": ["S2"]  # additional τ(res.)(j, "B") in Eq. 18
     }
 
 
@@ -668,15 +635,17 @@ def test_performing_Qmat():
 
 
     train_sets_rerouted = {
-        "skip_station": {2: "A"},
-        "Paths": {0: ["A", "B"], 1: ["A", "B"], 2: ["B", "A"]},
-        "J": [0, 1, 2],
+        "skip_station": {
+            "j3": "S1",  # we do not count train j3 leaving S1
+        },
+        "Paths": {"j1": ["S1", "S2"], "j2": ["S1", "S2"], "j3": ["S2", "S1"]},
+        "J": ["j1", "j2", "j3"],
         "Jd": dict(),
-        "Josingle": {("A", "B"): [[1,2]]},
+        "Josingle": {("S1", "S2"): [["j2", "j3"]]},
         "Jround": dict(),
-        "Jtrack": {"B": [[0, 1]]},
-        "Jswitch": {"A": [{1:"out", 2:"in"}], "B": [{1:"in", 2:"out"}]},
-        "add_swithes_at_s": ["B"]
+        "Jtrack": {"S2": [["j1", "j2"]]},
+        "Jswitch": dict(),
+        "add_swithes_at_s": ["S2"]  # additional τ(res.)(j, "B") in Eq. 18
     }
 
 
