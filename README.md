@@ -45,7 +45,7 @@ the matrix is saved on files for
 (1) `files/Qfile.npz` for **default setting** and,
 (2) `files/Qfile_r.npz` for **rerouted setting**.
 
-### Getting a solution
+### Getting a solution:
 
 To solve the Quadratic Unconstrained Binary Optimization problem on D-Wave's Advantage `QPU` and `hybrid solver` or `simulated annealer` one need to do the following
 
