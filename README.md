@@ -2,7 +2,7 @@
 
 Source code utilized for Quadratic and Higher-Order Unconstrained Binary Optimization of Railway Rescheduling for Quantum Computing.
 
-### Dependency installation
+## Dependency installation
 
 Anaconda distribution can be downloaded from [https://www.anaconda.com/products/individual](https://www.anaconda.com/products/individual). To install
 
@@ -19,7 +19,7 @@ To deactivate an active environment, use
 conda deactivate
 ```
 
-### Results reproduction
+## Results reproduction
 
 To reproduce the `Figure.[6]` in the article one need to run
 
@@ -28,11 +28,11 @@ python plot_DWave_results.py
 ```
 the figures are saved in the `plots` folder.
 
-### Generating new data
+## Generating new data
 
 Generating data basically constains the following steps
 
-##### Generating Q-matrix:
+### Generating Q-matrix:
 To generate the `Q-matrix` one need to run
 
 ```
@@ -45,7 +45,7 @@ the matrix is saved on files for
 (1) `files/Qfile.npz` for **default setting** and,
 (2) `files/Qfile_r.npz` for **rerouted setting**.
 
-##### Getting a solution
+### Getting a solution
 
 To solve the Quadratic Unconstrained Binary Optimization problem on D-Wave's Advantage `QPU` and `hybrid solver` or `simulated annealer` one need to do the following
 
@@ -71,7 +71,7 @@ python Qfile_solve.npy 'hybrid' 3996 250
 ```
 for **hybrid solver**.
 
-### Saved Data
+## Saved Data
 
 The newly generated data containing solution to the problem using the `hybrid solver` is saved in
 
@@ -84,3 +84,11 @@ whereas the folder
 files/dwave_data
 ```
 constains the outcome for `simulated` and `quantum annealer`.
+
+## Plotting
+
+One can simply run the follwing code the generate and save the plot (similar to `Figure.[6]` in the article)
+
+```
+python plot_DWave_results.py
+```
