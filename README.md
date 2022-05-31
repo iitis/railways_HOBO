@@ -92,3 +92,5 @@ One can simply run the follwing code the generate and save the plot (similar to 
 ```
 python plot_DWave_results.py
 ```
+
+which are saved in `files/plots` folder.
