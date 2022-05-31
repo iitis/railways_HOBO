@@ -86,8 +86,8 @@ train_sets_rerouted = {
     "Josingle": {("S1", "S2"): [["j2", "j3"]]},
     "Jround": dict(),
     "Jtrack": {"S2": [["j1", "j2"]]},
-    "Jswitch": dict(),
-    "add_swithes_at_s": ["S2"]  # additional τ(res.)(j, "B") in Eq. 18
+    "Jswitch": {"S1": [{"j2":"out", "j3":"in"}], "S2": [{"j2":"in", "j3":"out"}]}, # swithes from the single trach line
+    "add_swithes_at_s": ["S2"]  # additional τ(res.)(j, "B") in Eq. 18 to I track on the station
 }
 
 d_max = 10
