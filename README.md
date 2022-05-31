@@ -1,4 +1,4 @@
-## QUBO and HOBO of Railway Rescheduling for Quantum Computing
+# QUBO and HOBO of Railway Rescheduling for Quantum Computing
 
 Source code utilized for Quadratic and Higher-Order Unconstrained Binary Optimization of Railway Rescheduling for Quantum Computing.
 
