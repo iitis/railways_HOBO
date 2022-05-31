@@ -644,7 +644,6 @@ def test_DWave_Qmat():
         "Josingle": {("S1", "S2"): [["j2", "j3"]]},
         "Jround": dict(),
         "Jtrack": {"S2": [["j1", "j2"]]},
-        "Jswitch": dict(),
         "Jswitch": {"S1": [{"j2":"out", "j3":"in"}], "S2": [{"j2":"in", "j3":"out"}]}, # swithes from the single trach line
         "add_swithes_at_s": ["S2"]  # additional τ(res.)(j, "B") in Eq. 18
     }
