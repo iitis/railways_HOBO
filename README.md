@@ -39,7 +39,7 @@ To generate the `Q-matrix` one need to run
 python proceed_DWave_results.py
 ```
 
-the matrix is saved on files for 
+the matrix is saved on files for
 
 
 (1) `files/Qfile.npz` for **default setting** and,
@@ -59,7 +59,7 @@ For more details on the solvers see: [https://www.dwavesys.com/media/m2xbmlhs/14
 ```
 python Qfile_solve.npy 'simulated' 3996 250
 ```
-for **simulated annealer** and 
+for **simulated annealer** and
 
 ```
 python Qfile_solve.npy 'quantum' 3996 250
@@ -94,3 +94,13 @@ python plot_DWave_results.py
 ```
 
 which are saved in `files/plots` folder.
+
+
+### Citing this work
+
+K Domino, A Kundu, Ö Salehi, K Krawiec, Quadratic and higher-order unconstrained binary optimization of railway dispatching problem for quantum computing
+https://arxiv.org/abs/2107.03234
+
+The research was supported by:
+- the Foundation for Polish Science (FNP) under grant number TEAM NET POIR.04.04.00-00-17C1/18-00
+- the National Science Centre (NCN),Poland, under project number 2019/33/B/ST6/02011
