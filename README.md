@@ -96,7 +96,7 @@ python plot_DWave_results.py
 which are saved in `files/plots` folder.
 
 
-### Citing this work
+## Citing this work
 
 K Domino, A Kundu, Ö Salehi, K Krawiec, Quadratic and higher-order unconstrained binary optimization of railway dispatching problem for quantum computing
 https://arxiv.org/abs/2107.03234
