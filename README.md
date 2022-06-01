@@ -98,9 +98,9 @@ which are saved in `files/plots` folder.
 
 ## Citing this work
 
-K Domino, A Kundu, Ö Salehi, K Krawiec, Quadratic and higher-order unconstrained binary optimization of railway dispatching problem for quantum computing
+K Domino, A Kundu, Ö Salehi, K Krawiec, Quadratic and Higher-Order Unconstrained Binary Optimization of Railway Rescheduling for Quantum Computing
 https://arxiv.org/abs/2107.03234
 
 The research was supported by:
 - the Foundation for Polish Science (FNP) under grant number TEAM NET POIR.04.04.00-00-17C1/18-00
-- the National Science Centre (NCN),Poland, under project number 2019/33/B/ST6/02011
+- the National Science Centre (NCN), Poland, under project number 2019/33/B/ST6/02011
