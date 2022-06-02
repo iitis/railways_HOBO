@@ -1,6 +1,6 @@
 import pytest
-from railway_solvers import *
-
+import numpy as np
+from railway_solvers import make_Q, energy
 
 
 def test_5_trains_all_Js():

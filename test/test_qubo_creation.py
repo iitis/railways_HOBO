@@ -1,8 +1,10 @@
 import numpy as np
-from railway_solvers import *
+from railway_solvers import make_Q, energy, indexing4qubo, get_coupling, z_indices
+from railway_solvers import get_z_coupling, penalty, P1qubic, P2qubic, Pcirc
+from railway_solvers import Pswitch, Pspan, Pstay, P1track
 
 
-# testing particular QUBO element creation
+####### testing particular QUBO element creation   ######
 
 
 
@@ -64,7 +66,6 @@ def test_pspan_pstay_p1track():
     assert Pstay(trains_timing, k, k1, inds, trains_paths) == 0.
     assert Pstay(trains_timing, k1, k, inds, trains_paths) == 0.
 
-    #rerouting
 
     """
     1 ->                                    <- 2
@@ -221,7 +222,6 @@ def test_rolling_stock_circulation():
 
 def test_qubic():
 
-    # rerouting
 
     """
     1 ->                                    <- 2

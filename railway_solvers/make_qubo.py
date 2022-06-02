@@ -1,12 +1,12 @@
 import itertools
-
 import numpy as np
+from .helpers_functions import skip_station, not_the_same_rolling_stock, penalty_weights
+from .helpers_functions import subsequent_station, previous_station, occurs_as_pair, earliest_dep_time
+from .helpers_functions import tau, departure_station4switches, previous_train_from_Jround
 
-from .helpers_functions import *
 
 # this is the direct QUBO / HOBO implemntation for arXiv:2107.03234
-# there is no BQM / CQM approach
-# I want to leave this comparison
+
 
 def indexing4qubo(trains_paths, d_max):
     """returns vector of dicts of trains stations and delays
@@ -25,17 +25,18 @@ def indexing4qubo(trains_paths, d_max):
     return inds, len(inds)
 
 
-# constrains
+################# constrains  #####################
 
 def Psum(k, k1, jsd_dicts):
-    """sum to one constrain
+    """sum to one constrain - each train leaves each station (on its path) once and only once
 
-    returns the not wieghted contribution from the  ∑_i x_i  = 1 constrain
+    returns not wieghted (by peanlty constant) contribution from ∑_i x_i  = 1 constrain
     to Qmat at indices k and k1
 
     Input:
-    k, k1 -- indexes on the Q matrix
-    jsd_dicts -- vector of {"j": j, "s": s, "d": d}  form indexing4qubo
+    k, k1 -- indices the the Qmat
+    jsd_dicts -- vector {"j": j, "s": s, "d": d} -- train, station, delay.
+    Each train leaves each station at one and only one delay.
     """
     if jsd_dicts[k]["j"] == jsd_dicts[k1]["j"] and jsd_dicts[k]["s"] == jsd_dicts[k1]["s"]:
         if jsd_dicts[k]["d"] == jsd_dicts[k1]["d"]:

@@ -10,21 +10,6 @@ def occurs_as_pair(a, b, vecofvec):
 
 
 
-def update_dictofdicts(d1, d2):
-    """updates d1 (nested dict of dict ...)
-    by d2 -nested dict of dict ... (with the same structure but single element)
-    update at the lowest possible level of nesting
-    """
-    assert np.size(d2.keys()) == 1
-
-    for k in d2.keys():
-        if k in d1.keys():
-            update_dictofdicts(d1[k], d2[k])
-        else:
-            d1.update(d2)
-    return d1
-
-
 def subsequent_station(path, s):
     """given a train path and atation returns next station in this path"""
     k = path.index(s)
@@ -155,17 +140,6 @@ def departure_station4switches(s, j, place_of_switch, trains_paths):
         return previous_station(S[j], s)
 
 
-def get_M(LHS, RHS, d_max):
-    """computes minimal value of the large number M for the order variable
-    y ∈ [0,1] conditional inequality such that:
-
-      LHS + delay >= RHS + delay - M y
-
-      The inequality should be checked for y = 0 and always hold for y = 1
-      """
-    return np.max([RHS + d_max - LHS, 1.0])
-
-
 def skip_station(j,s, trains_paths):
     """ determines whether the station s should be skipped for train j
     while construtiong constrains, or delay variables
@@ -194,51 +168,6 @@ def previous_train_from_Jround(trains_paths,j, s):
             i = leave_trains.index(j)
             previous_train = pairs[i][0]
     return previous_train
-
-
-def subsequent_train_at_Jround(trains_paths, j, s):
-    """
-    returns the id of the train to which j gives a train set at station s if j
-    terminates at s and is continiued be the other train
-    """
-    next_train = None
-    Jround = trains_paths["Jround"]
-    if s in Jround:
-        pairs = Jround[s]
-        enter_trains = [el[0] for el in pairs]
-        if j in enter_trains:
-            i = enter_trains.index(j)
-            next_train = pairs[i][1]
-    return next_train
-
-
-
-def can_MO_on_line(j, jp, s, trains_paths):
-    """ returns true if trains j and j' can M_) in the line between s and  previous sp"""
-    Jd = trains_paths["Jd"]
-    S = trains_paths["Paths"]
-    sp = previous_station(S[j], s)
-    spp = previous_station(S[jp], s)
-
-    if sp == None or spp == None:
-        return False
-    if sp != spp:
-        return True
-    elif occurs_as_pair(j, jp, Jd[sp][s]):
-        return False
-    else:
-        return True
-
-def are_two_trains_entering_via_the_same_switches(trains_paths, s, j, jp):
-    if s in trains_paths["Jswitch"].keys():
-        v = trains_paths["Jswitch"][s]
-        are_swithes = np.array([j in e and jp in e for e in v])
-        if True in are_swithes:
-            return ('in', 'in') in [(v[i][j], v[i][jp]) for i in np.where(are_swithes == True)[0]]
-        else:
-            return False
-    else:
-        return False
 
 
 def energy(v, Q):

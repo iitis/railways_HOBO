@@ -2,8 +2,9 @@
 
 import pickle as pk
 import numpy as np
-from railway_solvers import earliest_dep_time, indexing4qubo, make_Q, energy
 import os
+from railway_solvers import earliest_dep_time, indexing4qubo, make_Q, energy
+
 
 
 def visualise_Qubo_solution(solution, trains_timing, trains_paths, d_max):

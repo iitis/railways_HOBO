@@ -1,18 +1,13 @@
-from railway_solvers import *
-
+from railway_solvers import skip_station, not_the_same_rolling_stock, penalty_weights
+from railway_solvers import subsequent_station, previous_station, occurs_as_pair, earliest_dep_time
+from railway_solvers import tau, departure_station4switches, previous_train_from_Jround
+from railway_solvers import energy
 
 def test_pairs():
     assert occurs_as_pair(1, 2, [[1, 2, 3], [4], [5, 6]]) == True
     assert occurs_as_pair(2, 1, [[1, 2, 3], [4], [5, 6]]) == True
     assert occurs_as_pair(1, 4, [[1, 2, 3], [4], [5, 6]]) == False
 
-    d1 = {0: {0: 1, 1: 2}, 1: {0: 1}}
-    d2 = {0: {2: 3}}
-    assert update_dictofdicts(d1, d2) == {0: {0: 1, 1: 2, 2: 3}, 1: {0: 1}}
-
-    d1 = {0: {0: 1, 1: 2}, 1: {0: 1}}
-    d2 = {2: {2: 3}}
-    assert update_dictofdicts(d1, d2) == {0: {0: 1, 1: 2}, 1: {0: 1}, 2: {2: 3}}
 
 
 def test_trains_paths():
@@ -47,7 +42,6 @@ def test_auxiliary_trains_timing_functions():
     assert tau(trains_timing, "pass", first_train=0, first_station=0, second_station=1) == 5
     assert tau(trains_timing, "res") == 3
 
-    #assert initial_conditions(trains_timing, 0, 0) == 4
     assert penalty_weights(trains_timing, 1, 0) == 1
     assert penalty_weights(trains_timing, 1, 1) == 0
     assert penalty_weights(trains_timing, 2, 1) == 1
@@ -75,33 +69,10 @@ def test_helpers_of_trains_paths():
 
     assert departure_station4switches("B", 1, {1: "out", 3: "out"}, trains_paths) == "B"
     assert departure_station4switches("B", 1, {1: "in", 3: "in"}, trains_paths) == "A"
-    assert get_M(2, 3, 4) == 5
     assert skip_station(1, "A", trains_paths) == False
 
     assert previous_train_from_Jround(trains_paths, 2, "B") == 1
-    assert subsequent_train_at_Jround(trains_paths, 1, "B") == 2
     assert previous_train_from_Jround(trains_paths, 1, "B") == None
-    assert subsequent_train_at_Jround(trains_paths, 2, "B") == None
-
-    assert are_two_trains_entering_via_the_same_switches(trains_paths, "B", 1, 3) == True
-    assert are_two_trains_entering_via_the_same_switches(trains_paths, "B", 1, 2) == False
-    assert are_two_trains_entering_via_the_same_switches(trains_paths, "A", 1, 3) == False
-
-    trains_paths = {
-        "Paths": {1: ["A", "B"], 2: ["C", "B"], 3: ["A", "B"]},
-        "Jd": {"A":{"B":[[1,3]]}, "C":{"B":[[2]]}},
-    }
-
-    assert can_MO_on_line(1, 3, "B", trains_paths) == False
-    assert can_MO_on_line(1, 2, "B", trains_paths) == True
-
-    trains_paths = {
-        "Paths": {1: ["A", "B"], 2: ["C", "B"], 3: ["A", "B"]},
-        "Jd": {"A":{"B":[[1],[3]]}, "C":{"B":[[2]]}},
-    }
-
-    assert can_MO_on_line(1, 3, "B", trains_paths) == True
-    assert can_MO_on_line(1, 2, "B", trains_paths) == True
 
 
 def test_energy_computation():
