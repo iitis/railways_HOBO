@@ -105,4 +105,5 @@ def test_5_trains_all_Js():
     sol = np.load("test/files/solution_5trains.npz")
 
     offset = -(2*3+1+2)*2.5
-    assert energy(sol, Q) == pytest.approx(offset + 1.01)
+    objective = 1.01
+    assert energy(sol, Q) == pytest.approx(offset + objective)
