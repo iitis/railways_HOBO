@@ -11,10 +11,8 @@ Q_file_exists = os.path.isfile('files/Qfile.npz')
 def visualise_Qubo_solution(solution, timetable, train_sets, d_max):
     inds, q_bits = indexing4qubo(train_sets, d_max)
     l = q_bits
-    print("x vars", l)
-    print("all var", np.size(Q[0]))
-    trains = ["j1", "j2", "j3"]
-    stations = {"A":"S1", "B":"S2"}
+    print("n.o. x vars", l)
+    print("n.o. all var", np.size(solution))
 
     S = train_sets["Paths"]
     for i in range(l):
@@ -31,12 +29,18 @@ def visualise_Qubo_solution(solution, timetable, train_sets, d_max):
 ####################  original problem ##########################
 
 """
-                                        <- j3
-...............................................
- [ S1 ]                             .   .   [ S2 ]
-.....................................c.........
-j1 ->
-j2 ->
+                                            <- j3
+    ..........c........................c....c......
+     [ S1 ] .  .                        .  .   [ S2 ]
+    .......c....c........................c.........
+    j1 ->
+    j2 ->
+
+
+    S1, S2 - stations
+    j1, j2, j3 - trains
+    .....  - track
+    c - switch
 """
 
 taus = {"pass": {"j1_S1_S2": 4, "j2_S1_S2": 8, "j3_S2_S1": 8},
@@ -68,11 +72,13 @@ train_sets = {
 ##########################   rerouted problem  #########################
 
 """
-1 ->                                       <- 2
-...............................................
- [ S1 ]                             .   .  [ S2 ]
-.....................................c.........
-0 ->
+    j2 ->                                      <- j3
+    ...........c.......................c...c.......
+     [ S1 ]  .  .                       . .    [ S2 ]
+    .........c...c.......................c.........
+    j1 ->
+
+
 """
 
 
@@ -92,7 +98,55 @@ train_sets_rerouted = {
 
 d_max = 10
 
-print(train_sets["J"])
+
+#####  D-Wave output   ######
+
+
+def load_train_solution(f, i):
+    """ load particular DWave solution from file """
+    file = open(
+        f, 'rb')
+    print("css", i)
+
+    x = pk.load(file)
+    solution = x[0][0]
+    print("lowest energy")
+    print("from file =", x[0][1])
+    return solution
+
+
+
+def print_timetables():
+    print("  >>>>>>>>>>>>>>>>>  original problem  <<<<<<<<<<<<<<<<<<<")
+
+    print(" ##########   DW  results  ###################")
+    Q = np.load("files/Qfile.npz")["Q"]
+    for i in [3, 3.5, 4, 4.5]:
+        solution = load_train_solution("files/dwave_data/Qfile_samples_sol_real-anneal_numread3996_antime250_chainst" + str(i), i)
+        print("from v Q vT = ", energy(solution, Q))
+        visualise_Qubo_solution(solution, timetable, train_sets, d_max)
+
+    print(" #########  Hybrid  solver results ############ ")
+    solution = load_train_solution("files/hybrid_data/Qfile_samples_sol_hybrid-anneal", "")
+    print("from v Q vT = ", energy(solution, Q))
+    visualise_Qubo_solution(solution, timetable, train_sets, d_max)
+
+    print("  >>>>>>>>>>>>>>>>>  rerouted problem  <<<<<<<<<<<<<<<<<<<")
+    Q_r = np.load("files/Qfile_r.npz")["Q"]
+    print(" ##########  DW  results retouted   ###################")
+    for i in [3, 3.5, 4, 4.5]:
+        solution_r = load_train_solution(f"files/dwave_data/Qfile_samples_sol_real-anneal_numread3996_antime250_chainst{i}_r", i)
+        print("from v Q vT = ", energy(solution_r, Q_r))
+        visualise_Qubo_solution(solution_r, timetable,
+                                    train_sets_rerouted, d_max)
+
+    print(" ######### Hybrid  solver results rerouted ############ ")
+    solution_r = load_train_solution("files/hybrid_data/Qfile_samples_sol_hybrid-anneal_r", "")
+    print("from v Q vT = ", energy(solution_r, Q_r))
+    visualise_Qubo_solution(solution_r, timetable, train_sets_rerouted, d_max)
+
+
+
 
 #####   Q matrix generation #########
 
@@ -112,48 +166,6 @@ if Q_file_exists == False:
                p_sum, p_pair, p_pair_qubic, p_qubic)
     np.savez("files/Qfile_r.npz", Q=Q)
 
-#####  D-Wave output   ######
 
 
-def load_train_solution(f):
-    """ load particular DWave solution from file """
-    file = open(
-        f, 'rb')
-    print("css", i)
-
-    x = pk.load(file)
-    solution = x[0][0]
-    print("lowest energy")
-    print("from file =", x[0][1])
-    return solution
-
-
-
-
-print("  >>>>>>>>>>>>>>>>>  original problem  <<<<<<<<<<<<<<<<<<<")
-
-print(" ##########   DW  results  ###################")
-Q = np.load("files/Qfile.npz")["Q"]
-for i in [3, 3.5, 4, 4.5]:
-    solution = load_train_solution("files/dwave_data/Qfile_samples_sol_real-anneal_numread3996_antime250_chainst" + str(i))
-    print("from v Q vT = ", energy(solution, Q))
-    visualise_Qubo_solution(solution, timetable, train_sets, d_max)
-
-print(" #########  Hybrid  solver results ############ ")
-solution = load_train_solution("files/hybrid_data/Qfile_samples_sol_hybrid-anneal")
-print("from v Q vT = ", energy(solution, Q))
-visualise_Qubo_solution(solution, timetable, train_sets, d_max)
-
-print("  >>>>>>>>>>>>>>>>>  rerouted problem  <<<<<<<<<<<<<<<<<<<")
-Q_r = np.load("files/Qfile_r.npz")["Q"]
-print(" ##########  DW  results retouted   ###################")
-for i in [3, 3.5, 4, 4.5]:
-    solution_r = load_train_solution(f"files/dwave_data/Qfile_samples_sol_real-anneal_numread3996_antime250_chainst{i}_r")
-    print("from v Q vT = ", energy(solution_r, Q_r))
-    visualise_Qubo_solution(solution_r, timetable,
-                                train_sets_rerouted, d_max)
-
-print(" ######### Hybrid  solver results rerouted ############ ")
-solution_r = load_train_solution("files/hybrid_data/Qfile_samples_sol_hybrid-anneal_r")
-print("from v Q vT = ", energy(solution_r, Q_r))
-visualise_Qubo_solution(solution_r, timetable, train_sets_rerouted, d_max)
+print_timetables()
