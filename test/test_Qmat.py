@@ -196,7 +196,8 @@ def test_circ_Qmat():
 
 def test_Qmat_solved_on_DWave():
     #### particular problem solved on the DWave ######
-    # original
+
+    ###### original ############
 
     """
                                             <- j3
@@ -251,7 +252,8 @@ def test_Qmat_solved_on_DWave():
 
     assert np.array_equal(Q, np.load("test/files/Qfile.npz")["Q"])
 
-    # rerouted
+    ############## rerouted  ############
+
     """
     j2 ->                                      <- j3
     ...........c.......................c...c.......
