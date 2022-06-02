@@ -408,12 +408,11 @@ def test_minimal_span_two_trains():
 
     p_sum = 2
     p_pair = 1.
-    p_pair_qubic = 1.
     p_qubic = 2.
     d_max = 5
 
     Q = make_Q(train_sets, timetable_1, d_max, p_sum,
-               p_pair, p_pair_qubic, p_qubic)
+               p_pair, p_pair, p_qubic)
 
     assert np.array_equal(Q, np.load("test/files/Qfile_one_way.npz")["Q"])
 
@@ -459,12 +458,11 @@ def  test_station_track_and_switches_two_trains():
 
     p_sum = 2
     p_pair = 1.
-    p_pair_qubic = 1.
     p_qubic = 2.
     d_max = 5
 
     Q = make_Q(train_sets, timetable_2, d_max, p_sum,
-               p_pair, p_pair_qubic, p_qubic)
+               p_pair, p_pair, p_qubic)
 
     assert np.array_equal(Q, np.load("test/files/Qfile_track.npz")["Q"])
 
@@ -508,12 +506,11 @@ def test_deadlock_and_switches_two_trains():
 
     p_sum = 2.
     p_pair = 1.
-    p_pair_qubic = 1.
     p_qubic = 2.
     d_max = 10
 
     Q = make_Q(train_sets, timetable_3, d_max, p_sum,
-               p_pair, p_pair_qubic, p_qubic)
+               p_pair, p_pair, p_qubic)
 
     assert np.array_equal(Q, np.load("test/files/Qfile_two_ways.npz")["Q"])
 
@@ -553,12 +550,11 @@ def test_circ_Qmat():
 
     p_sum = 2.
     p_pair = 1.
-    p_pair_qubic = 1.
     p_qubic = 2.
     d_max = 10
 
     Q = make_Q(train_sets, timetable, d_max, p_sum,
-               p_pair, p_pair_qubic, p_qubic)
+               p_pair, p_pair, p_qubic)
 
 
     assert np.array_equal(Q, np.load("test/files/Qfile_circ.npz")["Q"])
@@ -622,13 +618,12 @@ def test_DWave_Qmat():
 
     p_sum = 2.5
     p_pair = 1.25
-    p_pair_qubic = 1.25
     p_qubic = 2.1
 
     d_max = 10
 
     Q = make_Q(train_sets, timetable, d_max, p_sum,
-               p_pair, p_pair_qubic, p_qubic)
+               p_pair, p_pair, p_qubic)
 
     assert np.array_equal(Q, np.load("test/files/Qfile.npz")["Q"])
 
@@ -660,6 +655,6 @@ def test_DWave_Qmat():
 
 
     Q_r = make_Q(train_sets_rerouted, timetable, d_max,
-                 p_sum, p_pair, p_pair_qubic, p_qubic)
+                 p_sum, p_pair, p_pair, p_qubic)
 
     assert np.array_equal(Q_r, np.load("test/files/Qfile_r.npz")["Q"])
