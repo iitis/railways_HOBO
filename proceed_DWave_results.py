@@ -6,19 +6,19 @@ from railway_solvers import earliest_dep_time, indexing4qubo, make_Q, energy
 import os
 
 
-def visualise_Qubo_solution(solution, timetable, train_sets, d_max):
-    inds, q_bits = indexing4qubo(train_sets, d_max)
+def visualise_Qubo_solution(solution, trains_timing, trains_paths, d_max):
+    inds, q_bits = indexing4qubo(trains_paths, d_max)
     l = q_bits
     print("n.o. x vars", l)
     print("n.o. all var", np.size(solution))
 
-    S = train_sets["Paths"]
+    S = trains_paths["Paths"]
     for i in range(l):
         if solution[i] == 1:
             j = inds[i]["j"]
             s = inds[i]["s"]
             d = inds[i]["d"]
-            t = d + earliest_dep_time(S, timetable, j, s)
+            t = d + earliest_dep_time(S, trains_timing, j, s)
             print("train", j, "station", s, "delay", d, "dep. time", t)
     print("--------------------------------------------------")
 
@@ -37,7 +37,7 @@ def load_train_solution(f, i):
 
 
 
-def print_timetables():
+def print_trains_timings():
     print("  >>>>>>>>>>>>>>>>>  original problem  <<<<<<<<<<<<<<<<<<<")
 
     print(" ##########   DW  results  ###################")
@@ -45,12 +45,12 @@ def print_timetables():
     for i in [3, 3.5, 4, 4.5]:
         solution = load_train_solution(f"files/dwave_data/Qfile_samples_sol_real-anneal_numread3996_antime250_chainst{i}", i)
         print("from v Q vT = ", energy(solution, Q))
-        visualise_Qubo_solution(solution, timetable, train_sets, d_max)
+        visualise_Qubo_solution(solution, trains_timing, trains_paths, d_max)
 
     print(" #########  Hybrid  solver results ############ ")
     solution = load_train_solution("files/hybrid_data/Qfile_samples_sol_hybrid-anneal", "")
     print("from v Q vT = ", energy(solution, Q))
-    visualise_Qubo_solution(solution, timetable, train_sets, d_max)
+    visualise_Qubo_solution(solution, trains_timing, trains_paths, d_max)
 
     print("  >>>>>>>>>>>>>>>>>  rerouted problem  <<<<<<<<<<<<<<<<<<<")
     Q_r = np.load("files/Qfile_r.npz")["Q"]
@@ -58,13 +58,13 @@ def print_timetables():
     for i in [3, 3.5, 4, 4.5]:
         solution_r = load_train_solution(f"files/dwave_data/Qfile_samples_sol_real-anneal_numread3996_antime250_chainst{i}_r", i)
         print("from v Q vT = ", energy(solution_r, Q_r))
-        visualise_Qubo_solution(solution_r, timetable,
-                                    train_sets_rerouted, d_max)
+        visualise_Qubo_solution(solution_r, trains_timing,
+                                    trains_paths_rerouted, d_max)
 
     print(" ######### Hybrid  solver results rerouted ############ ")
     solution_r = load_train_solution("files/hybrid_data/Qfile_samples_sol_hybrid-anneal_r", "")
     print("from v Q vT = ", energy(solution_r, Q_r))
-    visualise_Qubo_solution(solution_r, timetable, train_sets_rerouted, d_max)
+    visualise_Qubo_solution(solution_r, trains_timing, trains_paths_rerouted, d_max)
 
 
 
@@ -91,16 +91,14 @@ taus = {"pass": {"j1_S1_S2": 4, "j2_S1_S2": 8, "j3_S2_S1": 8},
         "res": 1
         }
 
-timetable = {"tau": taus,
+trains_timing = {"tau": taus,
              "initial_conditions": {"j1_S1": 4, "j2_S1": 1, "j3_S2": 8},
              "penalty_weights": {"j1_S1": 2, "j2_S1": 1, "j3_S2": 1}}
 
 d_max = 10
 
-train_sets = {
-    "skip_station": {
-        "j3": "S1",  # we do not count train j3 leaving S1
-    },
+trains_paths = {
+    "skip_station": {"j3": "S1"}, # we do not count train j3 leaving S1
     "Paths": {"j1": ["S1", "S2"], "j2": ["S1", "S2"], "j3": ["S2", "S1"]},
     "J": ["j1", "j2", "j3"],
     "Jd": {"S1": {"S2": [["j1", "j2"]]}, "S2": {"S1": [["j3"]]}},
@@ -124,10 +122,8 @@ train_sets = {
 """
 
 
-train_sets_rerouted = {
-    "skip_station": {
-        "j3": "S1",  # we do not count train j3 leaving S1
-    },
+trains_paths_rerouted = {
+    "skip_station": {"j3": "S1"},  # we do not count train j3 leaving S1
     "Paths": {"j1": ["S1", "S2"], "j2": ["S1", "S2"], "j3": ["S2", "S1"]},
     "J": ["j1", "j2", "j3"],
     "Jd": dict(),
@@ -144,7 +140,7 @@ d_max = 10
 #####  D-Wave output   ######
 
 
-def save_Qmat(train_sets, timetable, d_max, f):
+def save_Qmat(trains_paths, trains_timing, d_max, f):
 
     if not os.path.isfile(f):
         print(f"save Q file to {f}")
@@ -152,7 +148,7 @@ def save_Qmat(train_sets, timetable, d_max, f):
         p_pair = 1.25
         p_qubic = 2.1
 
-        Q = make_Q(train_sets, timetable, d_max, p_sum,
+        Q = make_Q(trains_paths, trains_timing, d_max, p_sum,
                    p_pair, p_pair, p_qubic)
 
         np.savez(f, Q=Q)
@@ -163,7 +159,7 @@ if __name__ == "__main__":
 
     #####   Q matrix generation #########
 
-    save_Qmat(train_sets, timetable, d_max, 'files/Qfile.npz')
-    save_Qmat(train_sets_rerouted, timetable, d_max, 'files/Qfile_r.npz')
+    save_Qmat(trains_paths, trains_timing, d_max, 'files/Qfile.npz')
+    save_Qmat(trains_paths_rerouted, trains_timing, d_max, 'files/Qfile_r.npz')
 
-    print_timetables()
+    print_trains_timings()

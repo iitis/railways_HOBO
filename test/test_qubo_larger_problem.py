@@ -43,7 +43,7 @@ def test_5_trains_all_Js():
         "prep": {"23_C": 3},
         "res": 1,
     }
-    timetable = {
+    trains_timing = {
         "tau": taus,
         "initial_conditions": {
             "21_A": 6,
@@ -63,7 +63,7 @@ def test_5_trains_all_Js():
         },
     }
 
-    train_sets = {
+    trains_paths = {
         "skip_station": {22: "C", 23: "A", 24: "D", 25: "C"},
         "Paths": {
             21: ["A", "B", "C"],
@@ -86,8 +86,7 @@ def test_5_trains_all_Js():
                 {21: "in", 24: "out"},
             ],
             "D": [{24: "in", 25: "out"}],
-        },
-        "add_swithes_at_s": []  # we do not add aotomatically switches in thie example
+        }
     }
 
     d_max = 10
@@ -97,7 +96,7 @@ def test_5_trains_all_Js():
     p_pair = 1.25
     p_qubic = 2.1
 
-    Q = make_Q(train_sets, timetable, d_max, p_sum, p_pair, p_pair,
+    Q = make_Q(trains_paths, trains_timing, d_max, p_sum, p_pair, p_pair,
                p_qubic
                )
 

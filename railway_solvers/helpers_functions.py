@@ -47,7 +47,7 @@ def previous_station(path, s):
         return path[k - 1]
 
 
-# timetable input is extected to be in the following form of dict of dicts
+# trains_timing input is extected to be in the following form of dict of dicts
 #  taus are given as
 # taus = {"pass" : {"j_s_si" : τ^pass(j,s,s1), ...},
 # "headway" : {"j_j1_s_s1" : τ^pass(j,j1,s,s1)  .... },
@@ -57,76 +57,76 @@ def previous_station(path, s):
 # train schedule if available (train can not leave before schedule)
 # schedule = {"j_s" : t_schedule(j,s_out), ... }
 
-# timetable = {"tau": taus, "schedule" : schedule,
+# trains_timing = {"tau": taus, "schedule" : schedule,
 #              "initial_conditions" : {"j_s" : t(j,s_out), ...},
 #              "penalty_weights" : {"j_s" : w(j,s), ...}}
 
 
 def tau(
-    timetable,
+    trains_timing,
     key,
     first_train=None,
     first_station=None,
     second_station=None,
     second_train=None,
 ):
-    """given the timetable and the key returns particular time span τ(key)
+    """given the trains_timing and the key returns particular time span τ(key)
     for given train and station or stations
 
     in the key is not in ["headway", "pass", "stop", "prep", "res"]
     return None
     """
     if key == "headway":
-        return timetable["tau"]["headway"][
+        return trains_timing["tau"]["headway"][
             f"{first_train}_{second_train}_{first_station}_{second_station}"
         ]
     elif key == "pass":
         string = f"{first_train}_{first_station}_{second_station}"
-        return timetable["tau"][key][string]
+        return trains_timing["tau"][key][string]
     elif key == "stop":
-        return timetable["tau"][key][f"{first_train}_{first_station}"]
+        return trains_timing["tau"][key][f"{first_train}_{first_station}"]
     elif key == "prep":
-        return timetable["tau"][key][f"{first_train}_{first_station}"]
+        return trains_timing["tau"][key][f"{first_train}_{first_station}"]
     elif key == "res":
-        return timetable["tau"]["res"]
+        return trains_timing["tau"]["res"]
     return None
 
 
-def penalty_weights(timetable, train, station):
-    """given timetable returns penalty weight for
+def penalty_weights(trains_timing, train, station):
+    """given trains_timing returns penalty weight for
     a delay above unaviodable at the given station"""
 
     train_station = f"{train}_{station}"
-    if train_station in timetable["penalty_weights"]:
-        return timetable["penalty_weights"][train_station]
+    if train_station in trains_timing["penalty_weights"]:
+        return trains_timing["penalty_weights"][train_station]
     else:
         return 0.0
 
 
-def earliest_dep_time(S, timetable, train, station):
+def earliest_dep_time(S, trains_timing, train, station):
     """returns earlies possible departure of a train from the given station
     including unavoidlable delays and the schedule if the schedule is given
     """
-    if "schedule" in timetable:
-        sched = timetable["schedule"][f"{train}_{station}"]
+    if "schedule" in trains_timing:
+        sched = trains_timing["schedule"][f"{train}_{station}"]
     else:
         sched = -np.inf
     train_station = f"{train}_{station}"
 
-    if train_station in timetable["initial_conditions"]:
-        unaviodable = timetable["initial_conditions"][train_station]
+    if train_station in trains_timing["initial_conditions"]:
+        unaviodable = trains_timing["initial_conditions"][train_station]
         return np.maximum(sched, unaviodable)
     else:
         s = previous_station(S[train], station)
         τ_pass = tau(
-            timetable,
+            trains_timing,
             "pass",
             first_train=train,
             first_station=s,
             second_station=station,
         )
-        τ_stop = tau(timetable, "stop", first_train=train, first_station=station)
-        unavoidable = earliest_dep_time(S, timetable, train, s) + τ_pass
+        τ_stop = tau(trains_timing, "stop", first_train=train, first_station=station)
+        unavoidable = earliest_dep_time(S, trains_timing, train, s) + τ_pass
         unavoidable += τ_stop
         return np.maximum(sched, unavoidable)
 
@@ -134,24 +134,24 @@ def earliest_dep_time(S, timetable, train, station):
 # helpers for trains set
 
 
-def not_the_same_rolling_stock(j, jp, train_sets):
+def not_the_same_rolling_stock(j, jp, trains_paths):
     """checks if two trains (j, jp) are not served by the same rolling stock"""
-    if "Jround" not in train_sets:
+    if "Jround" not in trains_paths:
         return True
-    for s in train_sets["Jround"].keys():
-        if occurs_as_pair(j, jp, train_sets["Jround"][s]):
+    for s in trains_paths["Jround"].keys():
+        if occurs_as_pair(j, jp, trains_paths["Jround"][s]):
             return False
     return True
 
 
-def departure_station4switches(s, j, place_of_switch, train_sets):
+def departure_station4switches(s, j, place_of_switch, trains_paths):
     """returns the station symbol from which train j departes prior to passing
     the swith at station s
     """
     if place_of_switch[j] == "out":
         return s
     elif place_of_switch[j] == "in":
-        S = train_sets["Paths"]
+        S = trains_paths["Paths"]
         return previous_station(S[j], s)
 
 
@@ -166,27 +166,27 @@ def get_M(LHS, RHS, d_max):
     return np.max([RHS + d_max - LHS, 1.0])
 
 
-def skip_station(j,s, train_sets):
+def skip_station(j,s, trains_paths):
     """ determines whether the station s should be skipped for train j
     while construtiong constrains, or delay variables
      """
-    if "skip_station" not in train_sets:
+    if "skip_station" not in trains_paths:
         return False
-    elif j not in train_sets["skip_station"]:
+    elif j not in trains_paths["skip_station"]:
         return False
-    elif s != train_sets["skip_station"][j]:
+    elif s != trains_paths["skip_station"][j]:
         return False
     return True
 
 #####   the round specific cases for track occupation ####
 
-def previous_train_from_Jround(train_sets,j, s):
+def previous_train_from_Jround(trains_paths,j, s):
     """
     returns the id of the train from which j gets a train set at station s if j
     starts at s as an continuation of some other train
     """
     previous_train = None
-    Jround = train_sets["Jround"]
+    Jround = trains_paths["Jround"]
     if s in Jround:
         pairs = Jround[s]
         leave_trains = [el[1] for el in pairs]
@@ -196,13 +196,13 @@ def previous_train_from_Jround(train_sets,j, s):
     return previous_train
 
 
-def subsequent_train_at_Jround(train_sets, j, s):
+def subsequent_train_at_Jround(trains_paths, j, s):
     """
     returns the id of the train to which j gives a train set at station s if j
     terminates at s and is continiued be the other train
     """
     next_train = None
-    Jround = train_sets["Jround"]
+    Jround = trains_paths["Jround"]
     if s in Jround:
         pairs = Jround[s]
         enter_trains = [el[0] for el in pairs]
@@ -213,10 +213,10 @@ def subsequent_train_at_Jround(train_sets, j, s):
 
 
 
-def can_MO_on_line(j, jp, s, train_sets):
+def can_MO_on_line(j, jp, s, trains_paths):
     """ returns true if trains j and j' can M_) in the line between s and  previous sp"""
-    Jd = train_sets["Jd"]
-    S = train_sets["Paths"]
+    Jd = trains_paths["Jd"]
+    S = trains_paths["Paths"]
     sp = previous_station(S[j], s)
     spp = previous_station(S[jp], s)
 
@@ -229,9 +229,9 @@ def can_MO_on_line(j, jp, s, train_sets):
     else:
         return True
 
-def are_two_trains_entering_via_the_same_switches(train_sets, s, j, jp):
-    if s in train_sets["Jswitch"].keys():
-        v = train_sets["Jswitch"][s]
+def are_two_trains_entering_via_the_same_switches(trains_paths, s, j, jp):
+    if s in trains_paths["Jswitch"].keys():
+        v = trains_paths["Jswitch"][s]
         are_swithes = np.array([j in e and jp in e for e in v])
         if True in are_swithes:
             return ('in', 'in') in [(v[i][j], v[i][jp]) for i in np.where(are_swithes == True)[0]]

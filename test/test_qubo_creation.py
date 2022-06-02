@@ -23,12 +23,12 @@ def test_pspan_pstay_p1track():
             "res": 1
             }
 
-    timetable = {"tau": taus,
+    trains_timing = {"tau": taus,
                  "initial_conditions": {"0_A": 4, "1_A": 1, "2_B": 8},
                  "penalty_weights": {"0_A": 2, "1_A": 1, "2_B": 1}}
 
     # default
-    train_sets = {
+    trains_paths = {
         "skip_station": {2: "A"},
         "Paths": {0: ["A", "B"], 1: ["A", "B"], 2: ["B", "A"]},
         "J": [0, 1, 2],
@@ -36,33 +36,33 @@ def test_pspan_pstay_p1track():
         "Jtrack": {"B": [[0, 1]]}
     }
 
-    inds, q_bits = indexing4qubo(train_sets, 10)
+    inds, q_bits = indexing4qubo(trains_paths, 10)
 
     k = inds.index({'j': 0, 's': "A", 'd': 3})
     k1 = inds.index({'j': 1, 's': "A", 'd': 0})
 
     # test penalites for span and stay
 
-    assert Pspan(timetable, k, k1, inds, train_sets) == 0.
-    assert Pspan(timetable, k1, k, inds, train_sets) == 0.
+    assert Pspan(trains_timing, k, k1, inds, trains_paths) == 0.
+    assert Pspan(trains_timing, k1, k, inds, trains_paths) == 0.
 
     k = inds.index({'j': 0, 's': "A", 'd': 2})
     k1 = inds.index({'j': 1, 's': "A", 'd': 0})
 
-    assert Pspan(timetable, k, k1, inds, train_sets) == 1.
-    assert Pspan(timetable, k1, k, inds, train_sets) == 1.
+    assert Pspan(trains_timing, k, k1, inds, trains_paths) == 1.
+    assert Pspan(trains_timing, k1, k, inds, trains_paths) == 1.
 
     k = inds.index({'j': 0, 's': "A", 'd': 2})
     k1 = inds.index({'j': 0, 's': "B", 'd': 0})
 
-    assert Pstay(timetable, k, k1, inds, train_sets) == 1.
-    assert Pstay(timetable, k1, k, inds, train_sets) == 1.
+    assert Pstay(trains_timing, k, k1, inds, trains_paths) == 1.
+    assert Pstay(trains_timing, k1, k, inds, trains_paths) == 1.
 
     k = inds.index({'j': 0, 's': "A", 'd': 1})
     k1 = inds.index({'j': 0, 's': "B", 'd': 1})
 
-    assert Pstay(timetable, k, k1, inds, train_sets) == 0.
-    assert Pstay(timetable, k1, k, inds, train_sets) == 0.
+    assert Pstay(trains_timing, k, k1, inds, trains_paths) == 0.
+    assert Pstay(trains_timing, k1, k, inds, trains_paths) == 0.
 
     #rerouting
 
@@ -74,7 +74,7 @@ def test_pspan_pstay_p1track():
     0 ->
     """
 
-    train_sets_r = {
+    trains_paths_r = {
         "skip_station": {2: "A"},
         "Paths": {0: ["A", "B"], 1: ["A", "B"], 2: ["B", "A"]},
         "J": [0, 1, 2],
@@ -87,32 +87,32 @@ def test_pspan_pstay_p1track():
     k = inds.index({'j': 1, 's': "A", 'd': 0})
     k1 = inds.index({'j': 2, 's': "B", 'd': 0})
 
-    assert P1track(timetable, k, k1, inds, train_sets_r) == 1.
-    assert P1track(timetable, k1, k, inds, train_sets_r) == 1.
+    assert P1track(trains_timing, k, k1, inds, trains_paths_r) == 1.
+    assert P1track(trains_timing, k1, k, inds, trains_paths_r) == 1.
 
     k = inds.index({'j': 1, 's': "A", 'd': 6})
     k1 = inds.index({'j': 2, 's': "B", 'd': 0})
 
-    assert P1track(timetable, k, k1, inds, train_sets_r) == 1.
-    assert P1track(timetable, k1, k, inds, train_sets_r) == 1.
+    assert P1track(trains_timing, k, k1, inds, trains_paths_r) == 1.
+    assert P1track(trains_timing, k1, k, inds, trains_paths_r) == 1.
 
     k = inds.index({'j': 1, 's': "A", 'd': 10})
     k1 = inds.index({'j': 2, 's': "B", 'd': 0})
 
-    assert P1track(timetable, k, k1, inds, train_sets_r) == 1.
-    assert P1track(timetable, k1, k, inds, train_sets_r) == 1.
+    assert P1track(trains_timing, k, k1, inds, trains_paths_r) == 1.
+    assert P1track(trains_timing, k1, k, inds, trains_paths_r) == 1.
 
     k = inds.index({'j': 1, 's': "B", 'd': 1})
     k1 = inds.index({'j': 0, 's': "A", 'd': 2})
 
-    assert P1track(timetable, k, k1, inds, train_sets_r) == 0.
-    assert P1track(timetable, k1, k, inds, train_sets_r) == 0.
+    assert P1track(trains_timing, k, k1, inds, trains_paths_r) == 0.
+    assert P1track(trains_timing, k1, k, inds, trains_paths_r) == 0.
 
     k = inds.index({'j': 1, 's': "B", 'd': 0})
     k1 = inds.index({'j': 2, 's': "B", 'd': 1})
 
-    assert P1track(timetable, k, k1, inds, train_sets_r) == 0.
-    assert P1track(timetable, k1, k, inds, train_sets_r) == 0.
+    assert P1track(trains_timing, k, k1, inds, trains_paths_r) == 0.
+    assert P1track(trains_timing, k1, k, inds, trains_paths_r) == 0.
 
 
 def test_pswith():
@@ -128,7 +128,7 @@ def test_pswith():
     taus = {"pass": {"1_A_B": 8, "2_B_A": 8}, "res": 1}
 
 
-    train_sets_r = {
+    trains_paths_r = {
         "skip_station": {2: "A"},
         "Paths": {1: ["A", "B"], 2: ["B", "A"]},
         "J": [1, 2],
@@ -139,35 +139,35 @@ def test_pswith():
         "Jswitch": {"A": [{1: "out", 2: "in"}], "B": [{1: "in", 2: "out"}]}
     }
 
-    timetable = {"tau": taus,
+    trains_timing = {"tau": taus,
                  "initial_conditions": { "1_A": 1, "2_B": 8},
                  "penalty_weights": {"1_A": 1, "2_B": 1}}
 
-    inds, q_bits = indexing4qubo(train_sets_r, 10)
+    inds, q_bits = indexing4qubo(trains_paths_r, 10)
 
     k = inds.index({'j': 1, 's': "A", 'd': 0})
     k1 = inds.index({'j': 2, 's': "B", 'd': 0})
 
-    assert Pswitch(timetable, k, k1, inds, train_sets_r) == 0.
-    assert Pswitch(timetable, k1, k, inds, train_sets_r) == 0.
+    assert Pswitch(trains_timing, k, k1, inds, trains_paths_r) == 0.
+    assert Pswitch(trains_timing, k1, k, inds, trains_paths_r) == 0.
 
     k = inds.index({'j': 1, 's': "A", 'd': 0})
     k1 = inds.index({'j': 2, 's': "B", 'd': 2})
 
-    assert Pswitch(timetable, k, k1, inds, train_sets_r) == 0.
-    assert Pswitch(timetable, k1, k, inds, train_sets_r) == 0.
+    assert Pswitch(trains_timing, k, k1, inds, trains_paths_r) == 0.
+    assert Pswitch(trains_timing, k1, k, inds, trains_paths_r) == 0.
 
     k = inds.index({'j': 1, 's': "A", 'd': 0})
     k1 = inds.index({'j': 2, 's': "B", 'd': 1})
 
-    assert Pswitch(timetable, k, k1, inds, train_sets_r) == 1.
-    assert Pswitch(timetable, k1, k, inds, train_sets_r) == 1.
+    assert Pswitch(trains_timing, k, k1, inds, trains_paths_r) == 1.
+    assert Pswitch(trains_timing, k1, k, inds, trains_paths_r) == 1.
 
     k = inds.index({'j': 1, 's': "A", 'd': 5})
     k1 = inds.index({'j': 2, 's': "B", 'd': 6})
 
-    assert Pswitch(timetable, k, k1, inds, train_sets_r) == 1.
-    assert Pswitch(timetable, k1, k, inds, train_sets_r) == 1.
+    assert Pswitch(trains_timing, k, k1, inds, trains_paths_r) == 1.
+    assert Pswitch(trains_timing, k1, k, inds, trains_paths_r) == 1.
 
 
 def test_rolling_stock_circulation():
@@ -177,7 +177,7 @@ def test_rolling_stock_circulation():
     .....0 -> ......................................0 <-> 1......
     """
 
-    train_sets = {
+    trains_paths = {
         "Paths": {0: ["A", "B"], 1: ["B", "A"]},
         "J": [0, 1],
         "Jd": dict(),
@@ -187,35 +187,35 @@ def test_rolling_stock_circulation():
     }
 
     taus = {"pass": {"0_A_B": 4, "1_B_A": 8}, "prep": {"1_B": 2}}
-    timetable = {"tau": taus,
+    trains_timing = {"tau": taus,
                  "initial_conditions": {"0_A": 3, "1_B": 1},
                  "penalty_weights": {"0_A": 2, "1_B": 0.5}}
 
-    inds, q_bits = indexing4qubo(train_sets, 10)
+    inds, q_bits = indexing4qubo(trains_paths, 10)
 
     k = inds.index({'j': 0, 's': "A", 'd': 0})
     k1 = inds.index({'j': 1, 's': "B", 'd': 7})
 
-    assert Pcirc(timetable, k, k1, inds, train_sets) == 1.
-    assert Pcirc(timetable, k1, k, inds, train_sets) == 1.
+    assert Pcirc(trains_timing, k, k1, inds, trains_paths) == 1.
+    assert Pcirc(trains_timing, k1, k, inds, trains_paths) == 1.
 
     k = inds.index({'j': 0, 's': "A", 'd': 2})
     k1 = inds.index({'j': 1, 's': "B", 'd': 9})
 
-    assert Pcirc(timetable, k, k1, inds, train_sets) == 1.
-    assert Pcirc(timetable, k1, k, inds, train_sets) == 1.
+    assert Pcirc(trains_timing, k, k1, inds, trains_paths) == 1.
+    assert Pcirc(trains_timing, k1, k, inds, trains_paths) == 1.
 
     k = inds.index({'j': 0, 's': "A", 'd': 0})
     k1 = inds.index({'j': 1, 's': "B", 'd': 8})
 
-    assert Pcirc(timetable, k, k1, inds, train_sets) == 0.
-    assert Pcirc(timetable, k1, k, inds, train_sets) == 0.
+    assert Pcirc(trains_timing, k, k1, inds, trains_paths) == 0.
+    assert Pcirc(trains_timing, k1, k, inds, trains_paths) == 0.
 
     k = inds.index({'j': 0, 's': "A", 'd': 2})
     k1 = inds.index({'j': 1, 's': "B", 'd': 10})
 
-    assert Pcirc(timetable, k, k1, inds, train_sets) == 0.
-    assert Pcirc(timetable, k1, k, inds, train_sets) == 0.
+    assert Pcirc(trains_timing, k, k1, inds, trains_paths) == 0.
+    assert Pcirc(trains_timing, k1, k, inds, trains_paths) == 0.
 
 
 
@@ -237,11 +237,11 @@ def test_qubic():
             "res": 1
             }
 
-    timetable = {"tau": taus,
+    trains_timing = {"tau": taus,
                  "initial_conditions": {"0_A": 4, "1_A": 1, "2_B": 8},
                  "penalty_weights": {"0_A": 2, "1_A": 1, "2_B": 1}}
 
-    train_sets = {
+    trains_paths = {
         "skip_station": {2: "A"},
         "Paths": {0: ["A", "B"], 1: ["A", "B"], 2: ["B", "A"]},
         "J": [0, 1, 2],
@@ -251,8 +251,8 @@ def test_qubic():
         "Jtrack": {"B": [[0, 1]]}
     }
 
-    inds, q_bits = indexing4qubo(train_sets, 10)
-    inds_z, l = z_indices(train_sets, 10)
+    inds, q_bits = indexing4qubo(trains_paths, 10)
+    inds_z, l = z_indices(trains_paths, 10)
 
     assert l == 121
 
@@ -262,63 +262,63 @@ def test_qubic():
     k = inds1.index({'j': 0, 's': "A", 'd': 1})
     k1 = inds1.index({'j': 0, 'j1': 1, 's': "B", 'd': 1, 'd1': 4})
 
-    assert P1qubic(timetable, k, k1, inds1, train_sets) == 0.
-    assert P1qubic(timetable, k1, k, inds1, train_sets) == 0.
+    assert P1qubic(trains_timing, k, k1, inds1, trains_paths) == 0.
+    assert P1qubic(trains_timing, k1, k, inds1, trains_paths) == 0.
 
 
     k = inds1.index({'j': 0, 's': "A", 'd': 1})
     k1 = inds1.index({'j': 0, 'j1': 1, 's': "B", 'd': 4, 'd1': 1})
 
-    assert P1qubic(timetable, k, k1, inds1, train_sets) == 1.
-    assert P1qubic(timetable, k1, k, inds1, train_sets) == 1.
+    assert P1qubic(trains_timing, k, k1, inds1, trains_paths) == 1.
+    assert P1qubic(trains_timing, k1, k, inds1, trains_paths) == 1.
 
     k = inds1.index({'j': 1, 's': "A", 'd': 0})
     k1 = inds1.index({'j': 0, 'j1': 1, 's': "B", 'd': 4, 'd1': 8})
 
-    assert P1qubic(timetable, k, k1, inds1, train_sets) == 1.
-    assert P1qubic(timetable, k1, k, inds1, train_sets) == 1.
+    assert P1qubic(trains_timing, k, k1, inds1, trains_paths) == 1.
+    assert P1qubic(trains_timing, k1, k, inds1, trains_paths) == 1.
 
 
     k = inds1.index({'j': 0, 'j1': 1, 's': "B", 'd': 4, 'd1': 1})
     k1 = inds1.index({'j': 0, 'j1': 1, 's': "B", 'd': 4, 'd1': 2})
 
-    assert P2qubic(k, k, inds1, train_sets) == 3.
-    assert P2qubic(k, k1, inds1, train_sets) == 0.
+    assert P2qubic(k, k, inds1, trains_paths) == 3.
+    assert P2qubic(k, k1, inds1, trains_paths) == 0.
 
     k = inds1.index({'j': 0, 's': "A", 'd': 10})
     k1 = inds1.index({'j': 0, 'j1': 1, 's': "B", 'd': 4, 'd1': 8})
 
-    assert P2qubic(k, k1, inds1, train_sets) == 0.
+    assert P2qubic(k, k1, inds1, trains_paths) == 0.
 
     k = inds1.index({'j': 0, 's': "B", 'd': 10})
     k1 = inds1.index({'j': 0, 'j1': 1, 's': "B", 'd': 10, 'd1': 8})
 
-    assert P2qubic(k, k1, inds1, train_sets) == -1.
-    assert P2qubic(k1, k, inds1, train_sets) == -1.
+    assert P2qubic(k, k1, inds1, trains_paths) == -1.
+    assert P2qubic(k1, k, inds1, trains_paths) == -1.
 
     k = inds1.index({'j': 0, 's': "B", 'd': 1})
     k1 = inds1.index({'j': 1, 's': "B", 'd': 0})
 
-    assert P2qubic(k, k1, inds1, train_sets) == 0.5
-    assert P2qubic(k1, k, inds1, train_sets) == 0.5
+    assert P2qubic(k, k1, inds1, trains_paths) == 0.5
+    assert P2qubic(k1, k, inds1, trains_paths) == 0.5
 
     k = inds1.index({'j': 0, 's': "B", 'd': 1})
     k1 = inds1.index({'j': 2, 's': "B", 'd': 0})
 
-    assert P2qubic(k, k1, inds1, train_sets) == 0.
-    assert P2qubic(k1, k, inds1, train_sets) == 0.
+    assert P2qubic(k, k1, inds1, trains_paths) == 0.
+    assert P2qubic(k1, k, inds1, trains_paths) == 0.
 
     k = inds1.index({'j': 0, 's': "A", 'd': 1})
     k1 = inds1.index({'j': 1, 's': "A", 'd': 0})
 
-    assert P2qubic(k, k1, inds1, train_sets) == 0.
-    assert P2qubic(k1, k, inds1, train_sets) == 0.
+    assert P2qubic(k, k1, inds1, trains_paths) == 0.
+    assert P2qubic(k1, k, inds1, trains_paths) == 0.
 
     k = inds1.index({'j': 0, 's': "B", 'd': 1})
     k1 = inds1.index({'j': 1, 's': "A", 'd': 0})
 
-    assert P2qubic(k, k1, inds1, train_sets) == 0.
-    assert P2qubic(k1, k, inds1, train_sets) == 0.
+    assert P2qubic(k, k1, inds1, trains_paths) == 0.
+    assert P2qubic(k1, k, inds1, trains_paths) == 0.
 
 
 def test_penalties_and_couplings():
@@ -338,12 +338,12 @@ def test_penalties_and_couplings():
             "res": 1
             }
 
-    timetable = {"tau": taus,
+    trains_timing = {"tau": taus,
                  "initial_conditions": {"0_A": 4, "1_A": 1, "2_B": 8},
                  "penalty_weights": {"0_A": 2, "1_A": 1, "2_B": 1}}
 
 
-    train_sets = {
+    trains_paths = {
         "skip_station": {2: "A"},
         "Paths": {0: ["A", "B"], 1: ["A", "B"], 2: ["B", "A"]},
         "J": [0, 1, 2],
@@ -360,22 +360,22 @@ def test_penalties_and_couplings():
 
     d_max = 10
 
-    inds, q_bits = indexing4qubo(train_sets, d_max)
-    assert get_coupling(timetable, 0, 0, train_sets,
+    inds, q_bits = indexing4qubo(trains_paths, d_max)
+    assert get_coupling(trains_timing, 0, 0, trains_paths,
                         inds, p_sum, p_pair) == -2.5
-    assert get_coupling(timetable, 0, 24, train_sets,
+    assert get_coupling(trains_timing, 0, 24, trains_paths,
                         inds, p_sum, p_pair) == 1.25
 
-    inds_z, l = z_indices(train_sets, d_max)
+    inds_z, l = z_indices(trains_paths, d_max)
     inds1 = list(np.concatenate([inds, inds_z]))
 
     k = inds1.index({'j': 1, 's': "A", 'd': 0})
     k1 = inds1.index({'j': 0, 'j1': 1, 's': "B", 'd': 4, 'd1': 8})
 
-    assert get_z_coupling(timetable, k, k1, train_sets,
+    assert get_z_coupling(trains_timing, k, k1, trains_paths,
                           inds1, p_pair, p_qubic) == 1.25
 
-    assert penalty(timetable, 1, inds, d_max) == 0.2
+    assert penalty(trains_timing, 1, inds, d_max) == 0.2
 
 
 def test_minimal_span_two_trains():
@@ -392,11 +392,11 @@ def test_minimal_span_two_trains():
     taus = {"pass": {"0_A_B": 4, "1_A_B": 8},
             "headway": {"0_1_A_B": 2, "1_0_A_B": 6},
             "stop": {"0_B": 1, "1_B": 1}, "res": 1}
-    timetable_1 = {"tau": taus,
+    trains_timing_1 = {"tau": taus,
                  "initial_conditions": {"0_A": 3, "1_A": 1},
                  "penalty_weights": {"0_A": 2, "1_A": 0.5}}
 
-    train_sets = {
+    trains_paths = {
         "Paths": {0: ["A", "B"], 1: ["A", "B"]},
         "J": [0, 1],
         "Jd": {"A": {"B": [[0, 1]]}},
@@ -411,7 +411,7 @@ def test_minimal_span_two_trains():
     p_qubic = 2.
     d_max = 5
 
-    Q = make_Q(train_sets, timetable_1, d_max, p_sum,
+    Q = make_Q(trains_paths, trains_timing_1, d_max, p_sum,
                p_pair, p_pair, p_qubic)
 
     assert np.array_equal(Q, np.load("test/files/Qfile_one_way.npz")["Q"])
@@ -441,11 +441,11 @@ def  test_station_track_and_switches_two_trains():
     taus = {"pass": {"0_A_B": 4, "1_A_B": 4},
             "headway": {"0_1_A_B": 2, "1_0_B_A": 4},
             "stop": {"0_B": 1, "1_B": 1}, "res": 2}
-    timetable_2 = {"tau": taus,
+    trains_timing_2 = {"tau": taus,
                  "initial_conditions": {"0_A": 1, "1_A": 1},
                  "penalty_weights": {"0_A": 2, "1_A": 0.5}}
 
-    train_sets = {
+    trains_paths = {
         "Paths": {0: ["A", "B"], 1: ["A", "B"]},
         "J": [0, 1],
         "Jd": dict(),
@@ -461,7 +461,7 @@ def  test_station_track_and_switches_two_trains():
     p_qubic = 2.
     d_max = 5
 
-    Q = make_Q(train_sets, timetable_2, d_max, p_sum,
+    Q = make_Q(trains_paths, trains_timing_2, d_max, p_sum,
                p_pair, p_pair, p_qubic)
 
     assert np.array_equal(Q, np.load("test/files/Qfile_track.npz")["Q"])
@@ -487,7 +487,7 @@ def test_deadlock_and_switches_two_trains():
     ..0 -> .... c ................................  c  ..........
 
     """
-    train_sets = {
+    trains_paths = {
         "Paths": {0: ["A", "B"], 1: ["B", "A"]},
         "J": [0, 1],
         "Jd": dict(),
@@ -500,7 +500,7 @@ def test_deadlock_and_switches_two_trains():
     taus = {"pass": {"0_A_B": 4, "1_B_A": 8},
             "stop": {"0_B": 1, "1_A": 1}, "res": 1}
 
-    timetable_3 = {"tau": taus,
+    trains_timing_3 = {"tau": taus,
                 "initial_conditions": {"0_A": 3, "1_B": 1},
                 "penalty_weights": {"0_A": 2, "1_B": 0.5}}
 
@@ -509,7 +509,7 @@ def test_deadlock_and_switches_two_trains():
     p_qubic = 2.
     d_max = 10
 
-    Q = make_Q(train_sets, timetable_3, d_max, p_sum,
+    Q = make_Q(trains_paths, trains_timing_3, d_max, p_sum,
                p_pair, p_pair, p_qubic)
 
     assert np.array_equal(Q, np.load("test/files/Qfile_two_ways.npz")["Q"])
@@ -529,7 +529,7 @@ def test_circ_Qmat():
 
     """
 
-    train_sets = {
+    trains_paths = {
         "skip_station": {
             0: "B",
             1: "A",
@@ -544,7 +544,7 @@ def test_circ_Qmat():
     }
 
     taus = {"pass": {"0_A_B": 4, "1_B_A": 8}, "prep": {"1_B": 2}}
-    timetable = {"tau": taus,
+    trains_timing = {"tau": taus,
                  "initial_conditions": {"0_A": 3, "1_B": 1},
                  "penalty_weights": {"0_A": 2, "1_B": 0.5}}
 
@@ -553,7 +553,7 @@ def test_circ_Qmat():
     p_qubic = 2.
     d_max = 10
 
-    Q = make_Q(train_sets, timetable, d_max, p_sum,
+    Q = make_Q(trains_paths, trains_timing, d_max, p_sum,
                p_pair, p_pair, p_qubic)
 
 
@@ -570,7 +570,7 @@ def test_circ_Qmat():
 
 
 
-def test_DWave_Qmat():
+def test_Qmat_solved_on_DWave():
     #### particular problem solved on the DWave ######
     # original
 
@@ -595,13 +595,13 @@ def test_DWave_Qmat():
             "res": 1
             }
 
-    timetable = {"tau": taus,
+    trains_timing = {"tau": taus,
                  "initial_conditions": {"j1_S1": 4, "j2_S1": 1, "j3_S2": 8},
                  "penalty_weights": {"j1_S1": 2, "j2_S1": 1, "j3_S2": 1}}
 
     d_max = 10
 
-    train_sets = {
+    trains_paths = {
         "skip_station": {
             "j3": "S1",  # we do not count train j3 leaving S1
         },
@@ -622,7 +622,7 @@ def test_DWave_Qmat():
 
     d_max = 10
 
-    Q = make_Q(train_sets, timetable, d_max, p_sum,
+    Q = make_Q(trains_paths, trains_timing, d_max, p_sum,
                p_pair, p_pair, p_qubic)
 
     assert np.array_equal(Q, np.load("test/files/Qfile.npz")["Q"])
@@ -639,7 +639,7 @@ def test_DWave_Qmat():
     """
 
 
-    train_sets_rerouted = {
+    trains_paths_rerouted = {
         "skip_station": {
             "j3": "S1",  # we do not count train j3 leaving S1
         },
@@ -654,7 +654,7 @@ def test_DWave_Qmat():
     }
 
 
-    Q_r = make_Q(train_sets_rerouted, timetable, d_max,
+    Q_r = make_Q(trains_paths_rerouted, trains_timing, d_max,
                  p_sum, p_pair, p_pair, p_qubic)
 
     assert np.array_equal(Q_r, np.load("test/files/Qfile_r.npz")["Q"])
