@@ -5,30 +5,31 @@ from railway_solvers import make_Q, energy
 
 def test_5_trains_all_Js():
     """
-    We have the following trains: 21,22,23,24,25
-    and stations: A,B,C,D    [  ] - corresponds to the platform
+    21,22,23,24,25  - trains
+    [A],[B],[C],[D] - stations
+    -------         - tracks
+    c               - switches
     and tracks: ----     .....
 
-    the way trains go ->
     22 <-> 23 means that 22 ends, and then starts back as 23
-    (rolling stock circ)
-
-    the example sitation map is following:
+    (22 and 23 shares the same rolling stock)
 
 
 
-       -21, 22, -> --------------------------21 ->-- <-24--
-       [  A   ]        [ B  ]         .   .       [ C ]
-       -------------------------<- 23--c ---- 22 <-> 23 ---
+       -21, 22, -> --- c ------------------ c --21 ->-- <-24--
+       [  A   ]      [   B  ]         .  .  [   C      ]
+       -------------------------<- 23--c ---- 22 <-> 23 ------
+                                       .
+                                       .
                                       .
-          . -- 25-> - .             .
-      --- .  [ D  ]   . ----<- 24---
-            .........
+          ---- 25-> - .              .
+             [ D  ]    c -- <- 24 --
+          ------------
 
     """
 
     taus = {
-        "pass": {
+        "pass": {           # passing times of particular trains between stations
             "21_A_B": 4,
             "22_A_B": 8,
             "21_B_C": 4,
@@ -39,8 +40,9 @@ def test_5_trains_all_Js():
             "25_D_C": 3,
         },
         "headway": {"21_22_A_B": 2, "22_21_A_B": 6, "21_22_B_C": 2, "22_21_B_C": 6},
+        # there are headways of combinations of trailns that may follow each others
         "stop": {"21_B": 1, "22_B": 1, "21_C": 1, "23_B": 1},
-        "prep": {"23_C": 3},
+        "prep": {"23_C": 3}, # 22 termiantes at C, than it turns into 23, this is minimal preparation time
         "res": 1,
     }
     trains_timing = {
@@ -64,6 +66,7 @@ def test_5_trains_all_Js():
     }
 
     trains_paths = {
+        # departuring these stations by particular trains is not considered in the model
         "skip_station": {22: "C", 23: "A", 24: "D", 25: "C"},
         "Paths": {
             21: ["A", "B", "C"],
@@ -72,11 +75,13 @@ def test_5_trains_all_Js():
             24: ["C", "D"],
             25: ["D", "C"],
         },
-        "J": [21, 22, 23, 24, 25],
-        "Jd": {"A": {"B": [[21, 22]]}, "B": {"C": [[21, 22]]}},
-        "Josingle": {("C", "D"): [[24, 25]]},
-        "Jround": {"C": [[22, 23]]},
+        "J": [21, 22, 23, 24, 25], #set of trains
+        "Jd": {"A": {"B": [[21, 22]]}, "B": {"C": [[21, 22]]}}, #trains following each other (headway)
+        "Josingle": {("C", "D"): [[24, 25]]}, # trains heading in opossite direction on the single track line
+        "Jround": {"C": [[22, 23]]},  # at C 22 ands and starts then as 23
+        # trains that shares the same track at stations, note at C ,there are 2 such tracks
         "Jtrack": {"B": [[21, 22]], "C": [[21, 24], [22, 23]]},
+        # trains that pasz through common swithes while enetering or leaving given station
         "Jswitch": {
             "B": [{21: "out", 22: "out"}, {21: "in", 22: "in"}],
             "C": [
@@ -89,9 +94,8 @@ def test_5_trains_all_Js():
         }
     }
 
+    # parameters
     d_max = 10
-
-
     p_sum = 2.5
     p_pair = 1.25
     p_qubic = 2.1
@@ -99,7 +103,10 @@ def test_5_trains_all_Js():
     Q = make_Q(d_max, p_sum, p_pair, p_qubic, trains_timing, trains_paths
                )
 
+    assert np.array_equal(Q, np.load("test/files/Qfile_5trains.npz")["Q"])
 
+
+    # additional tests on already recorded solution form Hetropolis-Hastings
     sol = np.load("test/files/solution_5trains.npz")
 
     offset = -(2*3+1+2)*2.5
