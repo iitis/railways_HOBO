@@ -32,20 +32,6 @@ def previous_station(path, s):
         return path[k - 1]
 
 
-# trains_timing input is extected to be in the following form of dict of dicts
-#  taus are given as
-# taus = {"pass" : {"j_s_si" : τ^pass(j,s,s1), ...},
-# "headway" : {"j_j1_s_s1" : τ^pass(j,j1,s,s1)  .... },
-# "stop": {"j_s_None" : τ^stop(j,s)}, "res": τ^res}
-# τ^res is just one for all situations, it may need to be extended
-
-# train schedule if available (train can not leave before schedule)
-# schedule = {"j_s" : t_schedule(j,s_out), ... }
-
-# trains_timing = {"tau": taus, "schedule" : schedule,
-#              "initial_conditions" : {"j_s" : t(j,s_out), ...},
-#              "penalty_weights" : {"j_s" : w(j,s), ...}}
-
 
 def tau(
     trains_timing,

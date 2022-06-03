@@ -27,11 +27,14 @@ def indexing4qubo(trains_paths, d_max):
 
 ################# constrains  #####################
 
-def Psum(k, k1, jsd_dicts):
-    """sum to one constrain - each train leaves each station (on its path) once and only once
+def P_sum(k, k1, jsd_dicts):
+    """
+    Sum to one conditon - Eq. (41)
+
+    each train leaves each station (on its path) once and only once
 
     returns not wieghted (by peanlty constant) contribution from ∑_i x_i  = 1 constrain
-    to Qmat at indices k and k1
+    to Qmat[k, k1]
 
     Input:
     k, k1 -- indices the the Qmat
@@ -46,19 +49,22 @@ def Psum(k, k1, jsd_dicts):
     return 0.0
 
 
-def Pspan(trains_timing, k, k1, jsd_dicts, trains_paths):
-    """minimal span constrain
-    returns not weighted contribution to Qmat at indices k and k1,
-    symmetrised Qmat approach
+def P_headway(trains_timing, k, k1, jsd_dicts, trains_paths):
+    """
+    Minimal headway condition - Eq. (42)
+
+    Returns 0.0 or 1.0, i.e. not weighted contribution to Qmat[k, k1] and Qmat[k1, k]
 
     Input:
-    trains_timing -- time trains_timing
-    k, k1 -- indexes on the Q matrix
-    jsd_dicts -- vector of {"j": j, "s": s, "d": d}  form indexing4qubo
-    trains_paths -- train set dict containing trains paths
+    - trains_timing - dict
+    - trains_paths -- dict
+    - k, k1 -- indices
+    - jsd_dicts -- vector {"j": j, "s": s, "d": d}
+      of trains, stations, delays tied to index k ot k1
 
-    [s1] ..... j1 -> ....... j2 -> ..... [s2]
-                      span
+
+     ..... j1 -> ....... j2 -> .......
+    [s1]          headway         [s2]
     """
 
     S = trains_paths["Paths"]
@@ -101,16 +107,18 @@ def Pspan(trains_timing, k, k1, jsd_dicts, trains_paths):
     return 0.0
 
 
-def P1track(trains_timing, k, k1, jsd_dicts, trains_paths):
-    """single track line and deadlock constrain
-    returns not weighted contribution to Qmat at indices k and k1,
-    symmetrised Qmat approach
+def P_single_track_line(trains_timing, k, k1, jsd_dicts, trains_paths):
+    """
+    Single track line condition - Eq. (43)
+
+    Returns 0.0 or 1.0, i.e. not weighted contribution to Qmat[k, k1] and Qmat[k1, k]
 
     Input:
-    trains_timing -- time trains_timing
-    k, k1 -- indexes on the Q matrix
-    jsd_dicts -- vector of {"j": j, "s": s, "d": d}  form indexing4qubo
-    trains_paths -- train set dict containing trains paths
+    - trains_timing - dict
+    - trains_paths -- dict
+    - k, k1 -- indices
+    - jsd_dicts -- vector {"j": j, "s": s, "d": d}
+      of trains, stations, delays tied to index k ot k1
 
          ......                            ... <-j2 ..
         [s1]    .                        .      [s2]
@@ -118,12 +126,17 @@ def P1track(trains_timing, k, k1, jsd_dicts, trains_paths):
 
      """
 
-    p = penalty_single_track_condition(trains_timing, k, k1, jsd_dicts, trains_paths)
-    p += penalty_single_track_condition(trains_timing, k1, k, jsd_dicts, trains_paths)
+    #symetrisation
+    p = penalty_single_track(trains_timing, k, k1, jsd_dicts, trains_paths)
+    p += penalty_single_track(trains_timing, k1, k, jsd_dicts, trains_paths)
     return p
 
-def penalty_single_track_condition(trains_timing, k, k1, jsd_dicts, trains_paths):
-    """helper for P1track(trains_timing, k, k1, jsd_dicts, trains_paths)"""
+def penalty_single_track(trains_timing, k, k1, jsd_dicts, trains_paths):
+    """
+    Helper for P_single_track_line
+
+    Returns 0.0 or 1.0 as the contribution to Qmat[k, k1]
+    """
     S = trains_paths["Paths"]
     j = jsd_dicts[k]["j"]
     j1 = jsd_dicts[k1]["j"]
@@ -151,27 +164,33 @@ def penalty_single_track_condition(trains_timing, k, k1, jsd_dicts, trains_paths
     return 0.0
 
 
-def Pstay(trains_timing, k, k1, jsd_dicts, trains_paths):
-    """minimal stay constrain
+def P_minimal_stay(trains_timing, k, k1, jsd_dicts, trains_paths):
+    """
+    Minimal stay condition - Eq. (44)
 
-    returns not weighted contribution to Qmat at indices k and k1,
-    symmetrised Qmat approach
+    Returns 0.0 or 1.0, i.e. not weighted contribution to Qmat[k, k1] and Qmat[k1, k]
 
     Input:
-    trains_timing -- time trains_timing
-    k, k1 -- indexes on the Q matrix
-    jsd_dicts -- vector of {"j": j, "s": s, "d": d}  form indexing4qubo
-    trains_paths -- train set dict containing trains paths
+    - trains_timing - dict
+    - trains_paths -- dict
+    - k, k1 -- indices
+    - jsd_dicts -- vector {"j": j, "s": s, "d": d}
+      of trains, stations, delays tied to index k ot k1
 
     """
     S = trains_paths["Paths"]
-    p = penalty_for_minimal_stay_condition(trains_timing, k, k1, jsd_dicts, S)
-    p += penalty_for_minimal_stay_condition(trains_timing, k1, k, jsd_dicts, S)
+    p = penalty_minimal_stay(trains_timing, k, k1, jsd_dicts, S)
+    p += penalty_minimal_stay(trains_timing, k1, k, jsd_dicts, S)
     return p
 
 
-def penalty_for_minimal_stay_condition(trains_timing, k, k1, jsd_dicts , S):
-    """ helper for Pstay(trains_timing, k, k1, jsd_dicts, trains_paths)"""
+def penalty_minimal_stay(trains_timing, k, k1, jsd_dicts , S):
+    """
+    Helper for P_minimal_stay
+
+
+    Returns 0.0 or 1.0 as the contribution to Qmat[k, k1]
+    """
     j = jsd_dicts[k]["j"]
 
     if j == jsd_dicts[k1]["j"]:
@@ -188,31 +207,36 @@ def penalty_for_minimal_stay_condition(trains_timing, k, k1, jsd_dicts , S):
             )
             RHS += tau(trains_timing, "stop", first_train=j, first_station=s)
 
-            if LHS < RHS:  # trains_timing is ensured by nono-zero delay
+            if LHS < RHS:
                 return 1.0
     return 0.0
 
 
-def Pcirc(trains_timing, k, k1, inds, trains_paths):
-    """ rolling stock circulation condition
+def P_rolling_stock_circulation(trains_timing, k, k1, inds, trains_paths):
+    """
+    Rolling stock circulation condition - Eq. (45)
 
-    returns not weighted contribution to Qmat at indices k and k1,
-    symmetrised Qmat approach
+    Returns 0.0 or 1.0, i.e. not weighted contribution to Qmat[k, k1] and Qmat[k1, k]
 
     Input:
-    trains_timing -- time trains_timing
-    k, k1 -- indexes on the Q matrix
-    jsd_dicts -- vector of {"j": j, "s": s, "d": d}  form indexing4qubo
-    trains_paths -- train set dict containing trains paths
+    - trains_timing - dict
+    - trains_paths -- dict
+    - k, k1 -- indices
+    - jsd_dicts -- vector {"j": j, "s": s, "d": d}
+      of trains, stations, delays tied to index k ot k1
 
     """
-    p = p_circ(trains_timing, k, k1, inds, trains_paths)
-    p += p_circ(trains_timing, k1, k, inds, trains_paths)
+    p = penalty_rolling_stock(trains_timing, k, k1, inds, trains_paths)
+    p += penalty_rolling_stock(trains_timing, k1, k, inds, trains_paths)
     return p
 
 
-def p_circ(trains_timing, k, k1, inds, trains_paths):
-    """helper for Pcirc(trains_timing, k, k1, inds, trains_paths) """
+def penalty_rolling_stock(trains_timing, k, k1, inds, trains_paths):
+    """
+    Helper for P_rolling_stock_circulation
+
+    Returns 0.0 or 1.0 as the contribution to Qmat[k, k1]
+    """
     S = trains_paths["Paths"]
     j = inds[k]["j"]
     j1 = inds[k1]["j"]
@@ -233,17 +257,18 @@ def p_circ(trains_timing, k, k1, inds, trains_paths):
     return 0.0
 
 
-def Pswitch(trains_timing, k, k1, inds, trains_paths):
-    """switch occupancy condition
+def P_switch_occupation(trains_timing, k, k1, inds, trains_paths):
+    """
+    Switch occupancy condition - Eq. (46)
 
-    returns not weighted contribution to Qmat at indices k and k1,
-    symmetrised Qmat approach
+    Returns 0.0 or 1.0, i.e. not weighted contribution to Qmat[k, k1] and Qmat[k1, k]
 
     Input:
-    trains_timing -- time trains_timing
-    k, k1 -- indexes on the Q matrix
-    jsd_dicts -- vector of {"j": j, "s": s, "d": d}  form indexing4qubo
-    trains_paths -- train set dict containing trains paths
+    - trains_timing - dict
+    - trains_paths -- dict
+    - k, k1 -- indices
+    - jsd_dicts -- vector {"j": j, "s": s, "d": d}
+      of trains, stations, delays tied to index k ot k1
 
     j1 -> --------------
     [s1]                .
@@ -258,7 +283,7 @@ def Pswitch(trains_timing, k, k1, inds, trains_paths):
     sp = inds[k]["s"]
     spp = inds[k1]["s"]
 
-    if not_the_same_rolling_stock(jp, jpp, trains_paths):
+    if not_the_same_rolling_stock(jp, jpp, trains_paths): # train can not collide with itself
 
         for s in trains_paths["Jswitch"].keys():
             for pairs_of_switch in trains_paths["Jswitch"][s]:
@@ -272,7 +297,7 @@ def Pswitch(trains_timing, k, k1, inds, trains_paths):
                             s, jpp, pairs_of_switch, trains_paths
                         ):
 
-                            p = p_switch(
+                            p = penalty_switch(
                                 s, sp, spp, jp, jpp, trains_timing, k, k1, inds, trains_paths
                             )
                             if p > 0:
@@ -282,8 +307,13 @@ def Pswitch(trains_timing, k, k1, inds, trains_paths):
 
 
 
-def p_switch(s, sp, spp, jp, jpp, trains_timing, k, k1, inds, trains_paths):
-    """ helper for Pswitch(trains_timing, k, k1, inds, trains_paths) """
+def penalty_switch(s, sp, spp, jp, jpp, trains_timing, k, k1, inds, trains_paths):
+    """
+    helper for P_switch_occupation
+
+
+    Returns 0.0 or 1.0 as the contribution to Qmat[k, k1]
+    """
     S = trains_paths["Paths"]
 
     t = inds[k]["d"] + earliest_dep_time(S, trains_timing, jp, sp)
@@ -301,16 +331,15 @@ def p_switch(s, sp, spp, jp, jpp, trains_timing, k, k1, inds, trains_paths):
     return 0.0
 
 
-# single track occupation at station condition
+##### track occupancy condition ####
 
 def z_indices(trains_paths, d_max):
-    """ returns vector of dicts of two trains (j, j1)  at common stations (s)
+    """
+    auxiliary indexing for decomposition of qubic term, for track occupation condition
+
+    returns vector of dicts of two trains (j, j1)  at common stations (s)
     at delays (d, d1) in the form :
     {"j": j, "j1": j1, "s": s, "d": d, "d1": d1}
-
-    indexing is consitent with auxiliary variable used to decompose 3'rd
-    order terms used to handle track occupancy condition
-
     """
     jsd_dicts = []
     for s in trains_paths["Jtrack"].keys():
@@ -536,8 +565,9 @@ def penalty(trains_timing, k, jsd_dicts, d_max):
 
 def get_coupling(trains_timing, k, k1, trains_paths, jsd_dicts, p_sum, p_pair):
     """ returns weighted hard constrains contributions to Qmat at k,k1 in the
-    case where no auxiliary variables are included, i.e. no single track
-    occupancy at station
+    case where no auxiliary variables
+    - headway ,
+    minimal stay,
 
     Input:
     trains_timing -- time trains_timing
@@ -547,12 +577,14 @@ def get_coupling(trains_timing, k, k1, trains_paths, jsd_dicts, p_sum, p_pair):
     p_sum -- weight for sum to one constrain
     p_pair -- weight for quadratic constrains
     """
-    J = p_sum * Psum(k, k1, jsd_dicts)
-    J += p_pair * Pspan(trains_timing, k, k1, jsd_dicts, trains_paths)
-    J += p_pair * Pstay(trains_timing, k, k1, jsd_dicts, trains_paths)
-    J += p_pair * P1track(trains_timing, k, k1, jsd_dicts, trains_paths)
-    J += p_pair * Pcirc(trains_timing, k, k1, jsd_dicts, trains_paths)
-    J += p_pair * Pswitch(trains_timing, k, k1, jsd_dicts, trains_paths)
+    # each train leave each station onse and only once
+    J = p_sum * P_sum(k, k1, jsd_dicts)
+    # quadratic conditions
+    J += p_pair * P_headway(trains_timing, k, k1, jsd_dicts, trains_paths)
+    J += p_pair * P_minimal_stay(trains_timing, k, k1, jsd_dicts, trains_paths)
+    J += p_pair * P_single_track_line(trains_timing, k, k1, jsd_dicts, trains_paths)
+    J += p_pair * P_rolling_stock_circulation(trains_timing, k, k1, jsd_dicts, trains_paths)
+    J += p_pair * P_switch_occupation(trains_timing, k, k1, jsd_dicts, trains_paths)
     return J
 
 
@@ -580,15 +612,16 @@ def make_Q(trains_paths, trains_timing, d_max, p_sum, p_pair, p_pair_q, p_qubic)
 
     Parameters
     dmax -- maximal secondary delay
-    p_sum -- weight for sum to one constrain
-    p_pair -- weight for quadratic constrains
+    p_sum -- panalty for ∑_i x_i = 1 hard constrains
+    p_pair -- penalty for ∑_i,j x_i x_j = 0 hard constrains
+
     p_pair_q -- weight for quadratic constrains for the single track
     occupancy at station
     p_qubic -- weight for qubic constrains for the single track
     occupancy at station
     """
-    inds, q_bits = indexing4qubo(trains_paths, d_max)
-    inds_z, q_bits_z = z_indices(trains_paths, d_max)
+    inds, q_bits = indexing4qubo(trains_paths, d_max) # indices of vars
+    inds_z, q_bits_z = z_indices(trains_paths, d_max) # indices of auxiliary vars.
 
     inds1 = np.concatenate([inds, inds_z])
 
@@ -597,11 +630,14 @@ def make_Q(trains_paths, trains_timing, d_max, p_sum, p_pair, p_pair_q, p_qubic)
 
     Q = [[0.0 for _ in range(l1)] for _ in range(l1)]
 
+    # add soft panalties (objective)
     for k in range(l):
         Q[k][k] += penalty(trains_timing, k, inds, d_max)
+    # quadratic headway, stay, single_line, corculation, switch
     for k in range(l):
         for k1 in range(l):
             Q[k][k1] += get_coupling(trains_timing, k, k1, trains_paths, inds, p_sum, p_pair)
+    # qubic track occupancy condition.
     for k in range(l1):
         for k1 in range(l1):
             Q[k][k1] += get_z_coupling(

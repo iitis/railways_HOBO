@@ -1,14 +1,14 @@
 import numpy as np
 from railway_solvers import indexing4qubo, get_coupling, z_indices
-from railway_solvers import get_z_coupling, penalty, P1qubic, P2qubic, Pcirc
-from railway_solvers import Pswitch, Pspan, Pstay, P1track
+from railway_solvers import get_z_coupling, penalty, P1qubic, P2qubic, P_rolling_stock_circulation
+from railway_solvers import P_switch_occupation, P_headway, P_minimal_stay, P_single_track_line
 
 
 ####### testing particular QUBO element creation   ######
 
 
 
-def test_pspan_pstay_p1track():
+def test_P_headway_P_minimal_stay_P_single_track_line():
 
     """
                                           <- 2
@@ -45,26 +45,26 @@ def test_pspan_pstay_p1track():
 
     # test penalites for span and stay
 
-    assert Pspan(trains_timing, k, k1, inds, trains_paths) == 0.
-    assert Pspan(trains_timing, k1, k, inds, trains_paths) == 0.
+    assert P_headway(trains_timing, k, k1, inds, trains_paths) == 0.
+    assert P_headway(trains_timing, k1, k, inds, trains_paths) == 0.
 
     k = inds.index({'j': 0, 's': "A", 'd': 2})
     k1 = inds.index({'j': 1, 's': "A", 'd': 0})
 
-    assert Pspan(trains_timing, k, k1, inds, trains_paths) == 1.
-    assert Pspan(trains_timing, k1, k, inds, trains_paths) == 1.
+    assert P_headway(trains_timing, k, k1, inds, trains_paths) == 1.
+    assert P_headway(trains_timing, k1, k, inds, trains_paths) == 1.
 
     k = inds.index({'j': 0, 's': "A", 'd': 2})
     k1 = inds.index({'j': 0, 's': "B", 'd': 0})
 
-    assert Pstay(trains_timing, k, k1, inds, trains_paths) == 1.
-    assert Pstay(trains_timing, k1, k, inds, trains_paths) == 1.
+    assert P_minimal_stay(trains_timing, k, k1, inds, trains_paths) == 1.
+    assert P_minimal_stay(trains_timing, k1, k, inds, trains_paths) == 1.
 
     k = inds.index({'j': 0, 's': "A", 'd': 1})
     k1 = inds.index({'j': 0, 's': "B", 'd': 1})
 
-    assert Pstay(trains_timing, k, k1, inds, trains_paths) == 0.
-    assert Pstay(trains_timing, k1, k, inds, trains_paths) == 0.
+    assert P_minimal_stay(trains_timing, k, k1, inds, trains_paths) == 0.
+    assert P_minimal_stay(trains_timing, k1, k, inds, trains_paths) == 0.
 
 
     """
@@ -88,32 +88,32 @@ def test_pspan_pstay_p1track():
     k = inds.index({'j': 1, 's': "A", 'd': 0})
     k1 = inds.index({'j': 2, 's': "B", 'd': 0})
 
-    assert P1track(trains_timing, k, k1, inds, trains_paths_r) == 1.
-    assert P1track(trains_timing, k1, k, inds, trains_paths_r) == 1.
+    assert P_single_track_line(trains_timing, k, k1, inds, trains_paths_r) == 1.
+    assert P_single_track_line(trains_timing, k1, k, inds, trains_paths_r) == 1.
 
     k = inds.index({'j': 1, 's': "A", 'd': 6})
     k1 = inds.index({'j': 2, 's': "B", 'd': 0})
 
-    assert P1track(trains_timing, k, k1, inds, trains_paths_r) == 1.
-    assert P1track(trains_timing, k1, k, inds, trains_paths_r) == 1.
+    assert P_single_track_line(trains_timing, k, k1, inds, trains_paths_r) == 1.
+    assert P_single_track_line(trains_timing, k1, k, inds, trains_paths_r) == 1.
 
     k = inds.index({'j': 1, 's': "A", 'd': 10})
     k1 = inds.index({'j': 2, 's': "B", 'd': 0})
 
-    assert P1track(trains_timing, k, k1, inds, trains_paths_r) == 1.
-    assert P1track(trains_timing, k1, k, inds, trains_paths_r) == 1.
+    assert P_single_track_line(trains_timing, k, k1, inds, trains_paths_r) == 1.
+    assert P_single_track_line(trains_timing, k1, k, inds, trains_paths_r) == 1.
 
     k = inds.index({'j': 1, 's': "B", 'd': 1})
     k1 = inds.index({'j': 0, 's': "A", 'd': 2})
 
-    assert P1track(trains_timing, k, k1, inds, trains_paths_r) == 0.
-    assert P1track(trains_timing, k1, k, inds, trains_paths_r) == 0.
+    assert P_single_track_line(trains_timing, k, k1, inds, trains_paths_r) == 0.
+    assert P_single_track_line(trains_timing, k1, k, inds, trains_paths_r) == 0.
 
     k = inds.index({'j': 1, 's': "B", 'd': 0})
     k1 = inds.index({'j': 2, 's': "B", 'd': 1})
 
-    assert P1track(trains_timing, k, k1, inds, trains_paths_r) == 0.
-    assert P1track(trains_timing, k1, k, inds, trains_paths_r) == 0.
+    assert P_single_track_line(trains_timing, k, k1, inds, trains_paths_r) == 0.
+    assert P_single_track_line(trains_timing, k1, k, inds, trains_paths_r) == 0.
 
 
 def test_pswith():
@@ -149,26 +149,26 @@ def test_pswith():
     k = inds.index({'j': 1, 's': "A", 'd': 0})
     k1 = inds.index({'j': 2, 's': "B", 'd': 0})
 
-    assert Pswitch(trains_timing, k, k1, inds, trains_paths_r) == 0.
-    assert Pswitch(trains_timing, k1, k, inds, trains_paths_r) == 0.
+    assert P_switch_occupation(trains_timing, k, k1, inds, trains_paths_r) == 0.
+    assert P_switch_occupation(trains_timing, k1, k, inds, trains_paths_r) == 0.
 
     k = inds.index({'j': 1, 's': "A", 'd': 0})
     k1 = inds.index({'j': 2, 's': "B", 'd': 2})
 
-    assert Pswitch(trains_timing, k, k1, inds, trains_paths_r) == 0.
-    assert Pswitch(trains_timing, k1, k, inds, trains_paths_r) == 0.
+    assert P_switch_occupation(trains_timing, k, k1, inds, trains_paths_r) == 0.
+    assert P_switch_occupation(trains_timing, k1, k, inds, trains_paths_r) == 0.
 
     k = inds.index({'j': 1, 's': "A", 'd': 0})
     k1 = inds.index({'j': 2, 's': "B", 'd': 1})
 
-    assert Pswitch(trains_timing, k, k1, inds, trains_paths_r) == 1.
-    assert Pswitch(trains_timing, k1, k, inds, trains_paths_r) == 1.
+    assert P_switch_occupation(trains_timing, k, k1, inds, trains_paths_r) == 1.
+    assert P_switch_occupation(trains_timing, k1, k, inds, trains_paths_r) == 1.
 
     k = inds.index({'j': 1, 's': "A", 'd': 5})
     k1 = inds.index({'j': 2, 's': "B", 'd': 6})
 
-    assert Pswitch(trains_timing, k, k1, inds, trains_paths_r) == 1.
-    assert Pswitch(trains_timing, k1, k, inds, trains_paths_r) == 1.
+    assert P_switch_occupation(trains_timing, k, k1, inds, trains_paths_r) == 1.
+    assert P_switch_occupation(trains_timing, k1, k, inds, trains_paths_r) == 1.
 
 
 def test_rolling_stock_circulation():
@@ -197,26 +197,26 @@ def test_rolling_stock_circulation():
     k = inds.index({'j': 0, 's': "A", 'd': 0})
     k1 = inds.index({'j': 1, 's': "B", 'd': 7})
 
-    assert Pcirc(trains_timing, k, k1, inds, trains_paths) == 1.
-    assert Pcirc(trains_timing, k1, k, inds, trains_paths) == 1.
+    assert P_rolling_stock_circulation(trains_timing, k, k1, inds, trains_paths) == 1.
+    assert P_rolling_stock_circulation(trains_timing, k1, k, inds, trains_paths) == 1.
 
     k = inds.index({'j': 0, 's': "A", 'd': 2})
     k1 = inds.index({'j': 1, 's': "B", 'd': 9})
 
-    assert Pcirc(trains_timing, k, k1, inds, trains_paths) == 1.
-    assert Pcirc(trains_timing, k1, k, inds, trains_paths) == 1.
+    assert P_rolling_stock_circulation(trains_timing, k, k1, inds, trains_paths) == 1.
+    assert P_rolling_stock_circulation(trains_timing, k1, k, inds, trains_paths) == 1.
 
     k = inds.index({'j': 0, 's': "A", 'd': 0})
     k1 = inds.index({'j': 1, 's': "B", 'd': 8})
 
-    assert Pcirc(trains_timing, k, k1, inds, trains_paths) == 0.
-    assert Pcirc(trains_timing, k1, k, inds, trains_paths) == 0.
+    assert P_rolling_stock_circulation(trains_timing, k, k1, inds, trains_paths) == 0.
+    assert P_rolling_stock_circulation(trains_timing, k1, k, inds, trains_paths) == 0.
 
     k = inds.index({'j': 0, 's': "A", 'd': 2})
     k1 = inds.index({'j': 1, 's': "B", 'd': 10})
 
-    assert Pcirc(trains_timing, k, k1, inds, trains_paths) == 0.
-    assert Pcirc(trains_timing, k1, k, inds, trains_paths) == 0.
+    assert P_rolling_stock_circulation(trains_timing, k, k1, inds, trains_paths) == 0.
+    assert P_rolling_stock_circulation(trains_timing, k1, k, inds, trains_paths) == 0.
 
 
 

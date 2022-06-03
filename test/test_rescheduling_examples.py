@@ -2,32 +2,54 @@ import numpy as np
 from railway_solvers import make_Q, energy
 
 
-def test_minimal_span_two_trains():
+# trains_timing input is extected to be in the following form of dict of dicts
+#  taus are given as
+# taus = {"pass" : {"j_s_si" : τ^pass(j,s,s1), ...},
+# "headway" : {"j_j1_s_s1" : τ^headway(j,j1,s,s1)  .... },
+# "stop": {"j_s_None" : τ^stop(j,s)}, "res": τ^res}
+# τ^res is just one for all situations, it may need to be extended
+
+# train schedule if available (train can not leave before schedule)
+# schedule = {"j_s" : t_schedule(j,s_out), ... }
+
+# trains_timing = {"tau": taus, "schedule" : schedule,
+#              "initial_conditions" : {"j_s" : t(j,s_out), ...},
+#              "penalty_weights" : {"j_s" : w(j,s), ...}}
+
+
+def test_headway_two_trains():
 
     """
-    two trains, 0 and 1 are going one way A -> B test minimal span
+    two trains, j1 and j2 going one way A -> B test headway condition
 
-        A                            B
-     1 ->
-     0 ->  --------------------------
+
+     j2 ->
+     j1 ->  ------------------------------
+             [ A ]                    [ B ]
+
+    j1, j2 - trains
+    A, B - stations
+    -----    - line
     """
 
+    # if j1 go first from A to B and j2 second there is the headway between of 2,
+    # if j2 go first form A to B and j1 second there is the headway between of 6
 
-    taus = {"pass": {"0_A_B": 4, "1_A_B": 8},
-            "headway": {"0_1_A_B": 2, "1_0_A_B": 6},
-            "stop": {"0_B": 1, "1_B": 1}, "res": 1}
+    taus = {"pass": {"j1_A_B": 4, "j2_A_B": 8},
+            "headway": {"j1_j2_A_B": 2, "j2_j1_A_B": 6},
+            "stop": {"j1_B": 1, "j2_B": 1}, "res": 1}
     trains_timing_1 = {"tau": taus,
-                 "initial_conditions": {"0_A": 3, "1_A": 1},
-                 "penalty_weights": {"0_A": 2, "1_A": 0.5}}
+                 "initial_conditions": {"j1_A": 3, "j2_A": 1}, # leaving times
+                 "penalty_weights": {"j1_A": 2, "j2_A": 0.5}}  # these are w_j
 
     trains_paths = {
-        "Paths": {0: ["A", "B"], 1: ["A", "B"]},
-        "J": [0, 1],
-        "Jd": {"A": {"B": [[0, 1]]}},
-        "Josingle": dict(),
-        "Jround": dict(),
-        "Jtrack": dict(),
-        "Jswitch": dict()
+        "Paths": {"j1": ["A", "B"], "j2": ["A", "B"]}, # trains paths
+        "J": ["j1", "j2"],  # set of all trains
+        "Jd": {"A": {"B": [["j1", "j2"]]}}, # from A to B goes j1 and j2 on the same track
+        "Josingle": dict(),  # no single line condition
+        "Jround": dict(),  # no rolling stock circulation condition
+        "Jtrack": dict(), # no single track occupation condition
+        "Jswitch": dict() # no switch occupation condition
     }
 
     p_sum = 2
