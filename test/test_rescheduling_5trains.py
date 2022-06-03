@@ -96,8 +96,7 @@ def test_5_trains_all_Js():
     p_pair = 1.25
     p_qubic = 2.1
 
-    Q = make_Q(trains_paths, trains_timing, d_max, p_sum, p_pair, p_pair,
-               p_qubic
+    Q = make_Q(d_max, p_sum, p_pair, p_qubic, trains_timing, trains_paths
                )
 
 

@@ -57,8 +57,7 @@ def test_headway_two_trains():
     p_qubic = 2.
     d_max = 5
 
-    Q = make_Q(trains_paths, trains_timing_1, d_max, p_sum,
-               p_pair, p_pair, p_qubic)
+    Q = make_Q(d_max, p_sum, p_pair, p_qubic, trains_timing_1, trains_paths)
 
     assert np.array_equal(Q, np.load("test/files/Qfile_one_way.npz")["Q"])
 
@@ -107,8 +106,7 @@ def  test_station_track_and_switches_two_trains():
     p_qubic = 2.
     d_max = 5
 
-    Q = make_Q(trains_paths, trains_timing_2, d_max, p_sum,
-               p_pair, p_pair, p_qubic)
+    Q = make_Q(d_max, p_sum, p_pair, p_qubic, trains_timing_2, trains_paths)
 
     assert np.array_equal(Q, np.load("test/files/Qfile_track.npz")["Q"])
 
@@ -155,8 +153,7 @@ def test_deadlock_and_switches_two_trains():
     p_qubic = 2.
     d_max = 10
 
-    Q = make_Q(trains_paths, trains_timing_3, d_max, p_sum,
-               p_pair, p_pair, p_qubic)
+    Q = make_Q(d_max, p_sum, p_pair, p_qubic, trains_timing_3, trains_paths)
 
     assert np.array_equal(Q, np.load("test/files/Qfile_two_ways.npz")["Q"])
 
@@ -199,8 +196,7 @@ def test_circ_Qmat():
     p_qubic = 2.
     d_max = 10
 
-    Q = make_Q(trains_paths, trains_timing, d_max, p_sum,
-               p_pair, p_pair, p_qubic)
+    Q = make_Q(d_max, p_sum, p_pair, p_qubic, trains_timing, trains_paths)
 
 
     assert np.array_equal(Q, np.load("test/files/Qfile_circ.npz")["Q"])
@@ -269,8 +265,7 @@ def test_Qmat_solved_on_DWave():
 
     d_max = 10
 
-    Q = make_Q(trains_paths, trains_timing, d_max, p_sum,
-               p_pair, p_pair, p_qubic)
+    Q = make_Q(d_max, p_sum, p_pair, p_qubic, trains_timing, trains_paths)
 
     assert np.array_equal(Q, np.load("test/files/Qfile.npz")["Q"])
 
@@ -302,7 +297,6 @@ def test_Qmat_solved_on_DWave():
     }
 
 
-    Q_r = make_Q(trains_paths_rerouted, trains_timing, d_max,
-                 p_sum, p_pair, p_pair, p_qubic)
+    Q_r = make_Q(d_max,p_sum, p_pair, p_qubic, trains_timing, trains_paths_rerouted)
 
     assert np.array_equal(Q_r, np.load("test/files/Qfile_r.npz")["Q"])

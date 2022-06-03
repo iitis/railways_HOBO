@@ -141,7 +141,7 @@ d_max = 10
 #####  D-Wave output   ######
 
 
-def save_Qmat(trains_paths, trains_timing, d_max, f):
+def save_Qmat(d_max, trains_paths, trains_timing, f):
 
     if not os.path.isfile(f):
         print(f"save Q file to {f}")
@@ -149,8 +149,7 @@ def save_Qmat(trains_paths, trains_timing, d_max, f):
         p_pair = 1.25
         p_qubic = 2.1
 
-        Q = make_Q(trains_paths, trains_timing, d_max, p_sum,
-                   p_pair, p_pair, p_qubic)
+        Q = make_Q(d_max, p_sum, p_pair, p_qubic, trains_timing, trains_paths)
 
         np.savez(f, Q=Q)
 
@@ -160,7 +159,7 @@ if __name__ == "__main__":
 
     #####   Q matrix generation #########
 
-    save_Qmat(trains_paths, trains_timing, d_max, 'files/Qfile.npz')
-    save_Qmat(trains_paths_rerouted, trains_timing, d_max, 'files/Qfile_r.npz')
+    save_Qmat(d_max, trains_paths, trains_timing, 'files/Qfile.npz')
+    save_Qmat(d_max, trains_paths, trains_timing, 'files/Qfile1.npz')
 
     print_trains_timings()
