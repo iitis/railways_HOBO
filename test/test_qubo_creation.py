@@ -9,34 +9,29 @@ from railway_solvers import P_switch_occupation, P_headway, P_minimal_stay, P_si
 
 
 
-def test_P_headway_P_minimal_stay_P_single_track_line():
+def test_headway():
 
     """
-                                          <- 2
-    .............................................
-    [ A ]                            . .    [ B ]
-    ..................................c...........
+
+    [ A ]                                  [ B ]
+    ..............................................
     0 ->
     1 ->
     """
 
-    taus = {"pass": {"0_A_B": 4, "1_A_B": 8, "2_B_A": 8},
-            "headway": {"0_1_A_B": 2, "1_0_A_B": 6},
-            "stop": {"0_B": 1, "1_B": 1},
-            "res": 1
+    taus = {"pass": {"0_A_B": 4, "1_A_B": 8},
+            "headway": {"0_1_A_B": 2, "1_0_A_B": 6}
             }
 
     trains_timing = {"tau": taus,
-                 "initial_conditions": {"0_A": 4, "1_A": 1, "2_B": 8},
-                 "penalty_weights": {"0_A": 2, "1_A": 1, "2_B": 1}}
+                 "initial_conditions": {"0_A": 4, "1_A": 1},
+                 "penalty_weights": {"0_A": 2, "1_A": 1}}
 
-    # default
+
     trains_paths = {
-        "skip_station": {2: "A"},
-        "Paths": {0: ["A", "B"], 1: ["A", "B"], 2: ["B", "A"]},
-        "J": [0, 1, 2],
-        "Jd": {"A": {"B": [[0, 1]]}, "B": {"A": [[2]]}},
-        "Jtrack": {"B": [[0, 1]]}
+        "Paths": {0: ["A", "B"], 1: ["A", "B"]},
+        "J": [0, 1],
+        "Jd": {"A": {"B": [[0, 1]]}}
     }
 
     inds, q_bits = indexing4qubo(trains_paths, 10)
@@ -44,7 +39,6 @@ def test_P_headway_P_minimal_stay_P_single_track_line():
     k = inds.index({'j': 0, 's': "A", 'd': 3})
     k1 = inds.index({'j': 1, 's': "A", 'd': 0})
 
-    # test penalites for span and stay
 
     assert P_headway(k, k1, inds, trains_timing, trains_paths) == 0.
     assert P_headway(k1, k, inds, trains_timing, trains_paths) == 0.
@@ -55,8 +49,38 @@ def test_P_headway_P_minimal_stay_P_single_track_line():
     assert P_headway(k, k1, inds, trains_timing, trains_paths) == 1.
     assert P_headway(k1, k, inds, trains_timing, trains_paths) == 1.
 
+
+def minimal_stay():
+
+
+    """
+
+    [ A ]                                  [ B ]
+    ...............................................
+    0 ->
+
+    """
+
+    taus = {"pass": {"0_A_B": 4},
+            "stop": {"0_B": 1}
+            }
+
+    trains_timing = {"tau": taus,
+                 "initial_conditions": {"0_A": 4, "1_A": 1, "2_B": 8},
+                 "penalty_weights": {"0_A": 2}}
+
+
+    trains_paths = {
+        "Paths": {0: ["A", "B"]},
+        "J": [0],
+        "Jd": {"A": {"B": [[0]]}}
+    }
+
+    inds, q_bits = indexing4qubo(trains_paths, 10)
+
+    # can not make up delay by shortening the stay at "B"
     k = inds.index({'j': 0, 's': "A", 'd': 2})
-    k1 = inds.index({'j': 0, 's': "B", 'd': 0})
+    k1 = inds.index({'j': 0, 's': "B", 'd': 1})
 
     assert P_minimal_stay(k, k1, inds, trains_timing, trains_paths) == 1.
     assert P_minimal_stay(k1, k, inds, trains_timing, trains_paths) == 1.
@@ -67,6 +91,18 @@ def test_P_headway_P_minimal_stay_P_single_track_line():
     assert P_minimal_stay(k, k1, inds, trains_timing, trains_paths) == 0.
     assert P_minimal_stay(k1, k, inds, trains_timing, trains_paths) == 0.
 
+
+def test_single_track_line():
+
+    taus = {"pass": {"0_A_B": 4, "1_A_B": 8, "2_B_A": 8},
+            "headway": {"0_1_A_B": 2, "1_0_A_B": 6},
+            "stop": {"0_B": 1, "1_B": 1},
+            "res": 1
+            }
+
+    trains_timing = {"tau": taus,
+                 "initial_conditions": {"0_A": 4, "1_A": 1, "2_B": 8},
+                 "penalty_weights": {"0_A": 2, "1_A": 1, "2_B": 1}}
 
     """
     1 ->                                    <- 2
@@ -84,7 +120,9 @@ def test_P_headway_P_minimal_stay_P_single_track_line():
         "Jtrack": {"B": [[0, 1]]}
     }
 
-    # test penalties for deadlock
+
+    inds, q_bits = indexing4qubo(trains_paths_r, 10)
+
 
     k = inds.index({'j': 1, 's': "A", 'd': 0})
     k1 = inds.index({'j': 2, 's': "B", 'd': 0})
@@ -117,7 +155,7 @@ def test_P_headway_P_minimal_stay_P_single_track_line():
     assert P_single_track_line(k1, k, inds, trains_timing, trains_paths_r) == 0.
 
 
-def test_pswith():
+def test_switches():
 
     """
     ..........                                .... <- 2 ..
@@ -172,7 +210,7 @@ def test_pswith():
     assert P_switch_occupation(k1, k, inds, trains_timing, trains_paths_r) == 1.
 
 
-def test_rolling_stock_circulation():
+def test_rolling_stock_circ():
 
     """
      [ A ]                                            [ B ]
@@ -221,7 +259,7 @@ def test_rolling_stock_circulation():
 
 
 
-def test_qubic():
+def test_track_occupation():
 
 
     """
