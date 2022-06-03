@@ -160,6 +160,6 @@ if __name__ == "__main__":
     #####   Q matrix generation #########
 
     save_Qmat(d_max, trains_paths, trains_timing, 'files/Qfile.npz')
-    save_Qmat(d_max, trains_paths, trains_timing, 'files/Qfile1.npz')
+    save_Qmat(d_max, trains_paths_rerouted, trains_timing, 'files/Qfile_r.npz')
 
     print_trains_timings()
