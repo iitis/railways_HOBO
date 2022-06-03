@@ -17,6 +17,12 @@ def test_headway():
     ..............................................
     0 ->
     1 ->
+
+
+
+    0, 1 - trains
+    [A], [B] - stations
+    -----    - line
     """
 
     taus = {"pass": {"0_A_B": 4, "1_A_B": 8},
@@ -328,7 +334,7 @@ def test_penalties_and_couplings():
     """
     we examine following example
 
-    
+
                                           <- 2
     .............................................
     [ A ]                            . .    [ B ]

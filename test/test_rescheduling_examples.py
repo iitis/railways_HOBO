@@ -28,7 +28,7 @@ def test_headway_two_trains():
              [ A ]                    [ B ]
 
     j1, j2 - trains
-    A, B - stations
+    [A], [B] - stations
     -----    - line
     """
 
