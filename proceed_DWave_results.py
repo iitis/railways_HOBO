@@ -28,10 +28,10 @@ def load_train_solution(f, i):
         f, 'rb')
     print("css", i)
 
-    x = pk.load(file)
-    solution = x[0][0]
+    output = pk.load(file)
+    solution = output[0][0]
     print("lowest energy")
-    print("from file =", x[0][1])
+    print("from file =", output[0][1])
     return solution
 
 
@@ -42,12 +42,14 @@ def print_trains_timings():
     print(" ##########   DW  results  ###################")
     Q = np.load("files/Qfile.npz")["Q"]
     for i in [3, 3.5, 4, 4.5]:
-        solution = load_train_solution(f"files/dwave_data/Qfile_samples_sol_real-anneal_numread3996_antime250_chainst{i}", i)
+        f = f"files/dwave_data/Qfile_samples_sol_real-anneal_numread3996_antime250_chainst{i}"
+        solution = load_train_solution(f, i)
         print("from v Q vT = ", energy(solution, Q))
         visualise_Qubo_solution(solution, trains_timing, trains_paths, d_max)
 
     print(" #########  Hybrid  solver results ############ ")
-    solution = load_train_solution("files/hybrid_data/Qfile_samples_sol_hybrid-anneal", "")
+    f = "files/hybrid_data/Qfile_samples_sol_hybrid-anneal"
+    solution = load_train_solution(f, "")
     print("from v Q vT = ", energy(solution, Q))
     visualise_Qubo_solution(solution, trains_timing, trains_paths, d_max)
 
@@ -55,13 +57,15 @@ def print_trains_timings():
     Q_r = np.load("files/Qfile_r.npz")["Q"]
     print(" ##########  DW  results retouted   ###################")
     for i in [3, 3.5, 4, 4.5]:
-        solution_r = load_train_solution(f"files/dwave_data/Qfile_samples_sol_real-anneal_numread3996_antime250_chainst{i}_r", i)
+        f = f"files/dwave_data/Qfile_samples_sol_real-anneal_numread3996_antime250_chainst{i}_r"
+        solution_r = load_train_solution(f, i)
         print("from v Q vT = ", energy(solution_r, Q_r))
         visualise_Qubo_solution(solution_r, trains_timing,
                                     trains_paths_rerouted, d_max)
 
     print(" ######### Hybrid  solver results rerouted ############ ")
-    solution_r = load_train_solution("files/hybrid_data/Qfile_samples_sol_hybrid-anneal_r", "")
+    f = "files/hybrid_data/Qfile_samples_sol_hybrid-anneal_r"
+    solution_r = load_train_solution(f, "")
     print("from v Q vT = ", energy(solution_r, Q_r))
     visualise_Qubo_solution(solution_r, trains_timing, trains_paths_rerouted, d_max)
 
