@@ -1,12 +1,10 @@
-""" calls DWave solver TODO AK please specify""" 
-from typing import KeysView
+""" calls DWave solver TODO AK please specify """
+import pickle
 import neal
 import numpy as np
 from dwave.system import EmbeddingComposite, DWaveSampler, LeapHybridSampler
 import dimod
-import pandas as pd
 #import dwave.inspector
-import pickle
 # from edge_helpers import *
 # from generate_ham_edge import *
 # from generate_ham_ilp import *
@@ -14,7 +12,6 @@ import pickle
 
 
 def anneal_solutuon(method = None):
-
     if method == 'reroute':
         Q_init = np.load('files/Qfile_r.npz')
     else:
