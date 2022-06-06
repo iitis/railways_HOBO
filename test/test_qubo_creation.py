@@ -42,17 +42,17 @@ def test_headway():
     inds, q_bits = indexing4qubo(trains_paths, 10)
 
     k = inds.index({'j': 0, 's': "A", 'd': 3})
-    k1 = inds.index({'j': 1, 's': "A", 'd': 0})
+    l = inds.index({'j': 1, 's': "A", 'd': 0})
 
 
-    assert P_headway(k, k1, inds, trains_timing, trains_paths) == 0.
-    assert P_headway(k1, k, inds, trains_timing, trains_paths) == 0.
+    assert P_headway(k, l, inds, trains_timing, trains_paths) == 0.
+    assert P_headway(l, k, inds, trains_timing, trains_paths) == 0.
 
     k = inds.index({'j': 0, 's': "A", 'd': 2})
-    k1 = inds.index({'j': 1, 's': "A", 'd': 0})
+    l = inds.index({'j': 1, 's': "A", 'd': 0})
 
-    assert P_headway(k, k1, inds, trains_timing, trains_paths) == 1.
-    assert P_headway(k1, k, inds, trains_timing, trains_paths) == 1.
+    assert P_headway(k, l, inds, trains_timing, trains_paths) == 1.
+    assert P_headway(l, k, inds, trains_timing, trains_paths) == 1.
 
 
 def minimal_stay():
@@ -82,16 +82,16 @@ def minimal_stay():
 
     # can not make up delay by shortening the stay at "B"
     k = inds.index({'j': 0, 's': "A", 'd': 2})
-    k1 = inds.index({'j': 0, 's': "B", 'd': 1})
+    l = inds.index({'j': 0, 's': "B", 'd': 1})
 
-    assert P_minimal_stay(k, k1, inds, trains_timing, trains_paths) == 1.
-    assert P_minimal_stay(k1, k, inds, trains_timing, trains_paths) == 1.
+    assert P_minimal_stay(k, l, inds, trains_timing, trains_paths) == 1.
+    assert P_minimal_stay(l, k, inds, trains_timing, trains_paths) == 1.
 
     k = inds.index({'j': 0, 's': "A", 'd': 1})
-    k1 = inds.index({'j': 0, 's': "B", 'd': 1})
+    l = inds.index({'j': 0, 's': "B", 'd': 1})
 
-    assert P_minimal_stay(k, k1, inds, trains_timing, trains_paths) == 0.
-    assert P_minimal_stay(k1, k, inds, trains_timing, trains_paths) == 0.
+    assert P_minimal_stay(k, l, inds, trains_timing, trains_paths) == 0.
+    assert P_minimal_stay(l, k, inds, trains_timing, trains_paths) == 0.
 
 
 def test_single_track_line():
@@ -120,29 +120,29 @@ def test_single_track_line():
 
 
     k = inds.index({'j': 1, 's': "A", 'd': 0})
-    k1 = inds.index({'j': 2, 's': "B", 'd': 0})
+    l = inds.index({'j': 2, 's': "B", 'd': 0})
 
-    assert P_single_track_line(k, k1, inds, trains_timing, trains_paths_r) == 1.
-    assert P_single_track_line(k1, k, inds, trains_timing, trains_paths_r) == 1.
+    assert P_single_track_line(k, l, inds, trains_timing, trains_paths_r) == 1.
+    assert P_single_track_line(l, k, inds, trains_timing, trains_paths_r) == 1.
 
     k = inds.index({'j': 1, 's': "A", 'd': 6})
-    k1 = inds.index({'j': 2, 's': "B", 'd': 0})
+    l = inds.index({'j': 2, 's': "B", 'd': 0})
 
-    assert P_single_track_line(k, k1, inds, trains_timing, trains_paths_r) == 1.
-    assert P_single_track_line(k1, k, inds, trains_timing, trains_paths_r) == 1.
+    assert P_single_track_line(k, l, inds, trains_timing, trains_paths_r) == 1.
+    assert P_single_track_line(l, k, inds, trains_timing, trains_paths_r) == 1.
 
     k = inds.index({'j': 1, 's': "A", 'd': 10})
-    k1 = inds.index({'j': 2, 's': "B", 'd': 0})
+    l = inds.index({'j': 2, 's': "B", 'd': 0})
 
-    assert P_single_track_line(k, k1, inds, trains_timing, trains_paths_r) == 1.
-    assert P_single_track_line(k1, k, inds, trains_timing, trains_paths_r) == 1.
+    assert P_single_track_line(k, l, inds, trains_timing, trains_paths_r) == 1.
+    assert P_single_track_line(l, k, inds, trains_timing, trains_paths_r) == 1.
 
 
     k = inds.index({'j': 1, 's': "B", 'd': 0})
-    k1 = inds.index({'j': 2, 's': "B", 'd': 1})
+    l = inds.index({'j': 2, 's': "B", 'd': 1})
 
-    assert P_single_track_line(k, k1, inds, trains_timing, trains_paths_r) == 0.
-    assert P_single_track_line(k1, k, inds, trains_timing, trains_paths_r) == 0.
+    assert P_single_track_line(k, l, inds, trains_timing, trains_paths_r) == 0.
+    assert P_single_track_line(l, k, inds, trains_timing, trains_paths_r) == 0.
 
 
 def test_switches():
@@ -171,28 +171,28 @@ def test_switches():
     inds, q_bits = indexing4qubo(trains_paths_r, 10)
 
     k = inds.index({'j': 1, 's': "A", 'd': 0})
-    k1 = inds.index({'j': 2, 's': "B", 'd': 0})
+    l = inds.index({'j': 2, 's': "B", 'd': 0})
 
-    assert P_switch_occupation(k, k1, inds, trains_timing, trains_paths_r) == 0.
-    assert P_switch_occupation(k1, k, inds, trains_timing, trains_paths_r) == 0.
-
-    k = inds.index({'j': 1, 's': "A", 'd': 0})
-    k1 = inds.index({'j': 2, 's': "B", 'd': 2})
-
-    assert P_switch_occupation(k, k1, inds, trains_timing, trains_paths_r) == 0.
-    assert P_switch_occupation(k1, k, inds, trains_timing, trains_paths_r) == 0.
+    assert P_switch_occupation(k, l, inds, trains_timing, trains_paths_r) == 0.
+    assert P_switch_occupation(l, k, inds, trains_timing, trains_paths_r) == 0.
 
     k = inds.index({'j': 1, 's': "A", 'd': 0})
-    k1 = inds.index({'j': 2, 's': "B", 'd': 1})
+    l = inds.index({'j': 2, 's': "B", 'd': 2})
 
-    assert P_switch_occupation(k, k1, inds, trains_timing, trains_paths_r) == 1.
-    assert P_switch_occupation(k1, k, inds, trains_timing, trains_paths_r) == 1.
+    assert P_switch_occupation(k, l, inds, trains_timing, trains_paths_r) == 0.
+    assert P_switch_occupation(l, k, inds, trains_timing, trains_paths_r) == 0.
+
+    k = inds.index({'j': 1, 's': "A", 'd': 0})
+    l = inds.index({'j': 2, 's': "B", 'd': 1})
+
+    assert P_switch_occupation(k, l, inds, trains_timing, trains_paths_r) == 1.
+    assert P_switch_occupation(l, k, inds, trains_timing, trains_paths_r) == 1.
 
     k = inds.index({'j': 1, 's': "A", 'd': 5})
-    k1 = inds.index({'j': 2, 's': "B", 'd': 6})
+    l = inds.index({'j': 2, 's': "B", 'd': 6})
 
-    assert P_switch_occupation(k, k1, inds, trains_timing, trains_paths_r) == 1.
-    assert P_switch_occupation(k1, k, inds, trains_timing, trains_paths_r) == 1.
+    assert P_switch_occupation(k, l, inds, trains_timing, trains_paths_r) == 1.
+    assert P_switch_occupation(l, k, inds, trains_timing, trains_paths_r) == 1.
 
 
 def test_rolling_stock_circ():
@@ -216,28 +216,28 @@ def test_rolling_stock_circ():
     inds, q_bits = indexing4qubo(trains_paths, 10)
 
     k = inds.index({'j': 0, 's': "A", 'd': 0})
-    k1 = inds.index({'j': 1, 's': "B", 'd': 7})
+    l = inds.index({'j': 1, 's': "B", 'd': 7})
 
-    assert P_rolling_stock_circulation(k, k1, inds, trains_timing, trains_paths) == 1.
-    assert P_rolling_stock_circulation(k1, k, inds, trains_timing, trains_paths) == 1.
+    assert P_rolling_stock_circulation(k, l, inds, trains_timing, trains_paths) == 1.
+    assert P_rolling_stock_circulation(l, k, inds, trains_timing, trains_paths) == 1.
 
     k = inds.index({'j': 0, 's': "A", 'd': 2})
-    k1 = inds.index({'j': 1, 's': "B", 'd': 9})
+    l = inds.index({'j': 1, 's': "B", 'd': 9})
 
-    assert P_rolling_stock_circulation(k, k1, inds, trains_timing, trains_paths) == 1.
-    assert P_rolling_stock_circulation(k1, k, inds, trains_timing, trains_paths) == 1.
+    assert P_rolling_stock_circulation(k, l, inds, trains_timing, trains_paths) == 1.
+    assert P_rolling_stock_circulation(l, k, inds, trains_timing, trains_paths) == 1.
 
     k = inds.index({'j': 0, 's': "A", 'd': 0})
-    k1 = inds.index({'j': 1, 's': "B", 'd': 8})
+    l = inds.index({'j': 1, 's': "B", 'd': 8})
 
-    assert P_rolling_stock_circulation(k, k1, inds, trains_timing, trains_paths) == 0.
-    assert P_rolling_stock_circulation(k1, k, inds, trains_timing, trains_paths) == 0.
+    assert P_rolling_stock_circulation(k, l, inds, trains_timing, trains_paths) == 0.
+    assert P_rolling_stock_circulation(l, k, inds, trains_timing, trains_paths) == 0.
 
     k = inds.index({'j': 0, 's': "A", 'd': 2})
-    k1 = inds.index({'j': 1, 's': "B", 'd': 10})
+    l = inds.index({'j': 1, 's': "B", 'd': 10})
 
-    assert P_rolling_stock_circulation(k, k1, inds, trains_timing, trains_paths) == 0.
-    assert P_rolling_stock_circulation(k1, k, inds, trains_timing, trains_paths) == 0.
+    assert P_rolling_stock_circulation(k, l, inds, trains_timing, trains_paths) == 0.
+    assert P_rolling_stock_circulation(l, k, inds, trains_timing, trains_paths) == 0.
 
 
 
@@ -273,60 +273,60 @@ def test_track_occupation():
 
 
     k = inds1.index({'j': 0, 's': "A", 'd': 1})
-    k1 = inds1.index({'j': 0, 'j1': 1, 's': "B", 'd': 1, 'd1': 4})
+    l = inds1.index({'j': 0, 'j1': 1, 's': "B", 'd': 1, 'd1': 4})
 
-    assert P_track_occupation_condition_quadratic_part(k, k1, inds1, trains_timing, trains_paths) == 0.
-    assert P_track_occupation_condition_quadratic_part(k1, k, inds1, trains_timing, trains_paths) == 0.
+    assert P_track_occupation_condition_quadratic_part(k, l, inds1, trains_timing, trains_paths) == 0.
+    assert P_track_occupation_condition_quadratic_part(l, k, inds1, trains_timing, trains_paths) == 0.
 
 
     k = inds1.index({'j': 0, 's': "A", 'd': 1})
-    k1 = inds1.index({'j': 0, 'j1': 1, 's': "B", 'd': 4, 'd1': 1})
+    l = inds1.index({'j': 0, 'j1': 1, 's': "B", 'd': 4, 'd1': 1})
 
-    assert P_track_occupation_condition_quadratic_part(k, k1, inds1, trains_timing, trains_paths) == 1.
-    assert P_track_occupation_condition_quadratic_part(k1, k, inds1, trains_timing, trains_paths) == 1.
+    assert P_track_occupation_condition_quadratic_part(k, l, inds1, trains_timing, trains_paths) == 1.
+    assert P_track_occupation_condition_quadratic_part(l, k, inds1, trains_timing, trains_paths) == 1.
 
     k = inds1.index({'j': 1, 's': "A", 'd': 0})
-    k1 = inds1.index({'j': 0, 'j1': 1, 's': "B", 'd': 4, 'd1': 8})
+    l = inds1.index({'j': 0, 'j1': 1, 's': "B", 'd': 4, 'd1': 8})
 
-    assert P_track_occupation_condition_quadratic_part(k, k1, inds1, trains_timing, trains_paths) == 1.
-    assert P_track_occupation_condition_quadratic_part(k1, k, inds1, trains_timing, trains_paths) == 1.
+    assert P_track_occupation_condition_quadratic_part(k, l, inds1, trains_timing, trains_paths) == 1.
+    assert P_track_occupation_condition_quadratic_part(l, k, inds1, trains_timing, trains_paths) == 1.
 
 
     k = inds1.index({'j': 0, 'j1': 1, 's': "B", 'd': 4, 'd1': 1})
-    k1 = inds1.index({'j': 0, 'j1': 1, 's': "B", 'd': 4, 'd1': 2})
+    l = inds1.index({'j': 0, 'j1': 1, 's': "B", 'd': 4, 'd1': 2})
 
     assert P_Rosenberg_decomposition(k, k, inds1, trains_paths) == 3.
-    assert P_Rosenberg_decomposition(k, k1, inds1, trains_paths) == 0.
+    assert P_Rosenberg_decomposition(k, l, inds1, trains_paths) == 0.
 
     k = inds1.index({'j': 0, 's': "A", 'd': 10})
-    k1 = inds1.index({'j': 0, 'j1': 1, 's': "B", 'd': 4, 'd1': 8})
+    l = inds1.index({'j': 0, 'j1': 1, 's': "B", 'd': 4, 'd1': 8})
 
-    assert P_Rosenberg_decomposition(k, k1, inds1, trains_paths) == 0.
+    assert P_Rosenberg_decomposition(k, l, inds1, trains_paths) == 0.
 
     k = inds1.index({'j': 0, 's': "B", 'd': 10})
-    k1 = inds1.index({'j': 0, 'j1': 1, 's': "B", 'd': 10, 'd1': 8})
+    l = inds1.index({'j': 0, 'j1': 1, 's': "B", 'd': 10, 'd1': 8})
 
-    assert P_Rosenberg_decomposition(k, k1, inds1, trains_paths) == -1.
-    assert P_Rosenberg_decomposition(k1, k, inds1, trains_paths) == -1.
+    assert P_Rosenberg_decomposition(k, l, inds1, trains_paths) == -1.
+    assert P_Rosenberg_decomposition(l, k, inds1, trains_paths) == -1.
 
     k = inds1.index({'j': 0, 's': "B", 'd': 1})
-    k1 = inds1.index({'j': 1, 's': "B", 'd': 0})
+    l = inds1.index({'j': 1, 's': "B", 'd': 0})
 
-    assert P_Rosenberg_decomposition(k, k1, inds1, trains_paths) == 0.5
-    assert P_Rosenberg_decomposition(k1, k, inds1, trains_paths) == 0.5
+    assert P_Rosenberg_decomposition(k, l, inds1, trains_paths) == 0.5
+    assert P_Rosenberg_decomposition(l, k, inds1, trains_paths) == 0.5
 
 
     k = inds1.index({'j': 0, 's': "A", 'd': 1})
-    k1 = inds1.index({'j': 1, 's': "A", 'd': 0})
+    l = inds1.index({'j': 1, 's': "A", 'd': 0})
 
-    assert P_Rosenberg_decomposition(k, k1, inds1, trains_paths) == 0.
-    assert P_Rosenberg_decomposition(k1, k, inds1, trains_paths) == 0.
+    assert P_Rosenberg_decomposition(k, l, inds1, trains_paths) == 0.
+    assert P_Rosenberg_decomposition(l, k, inds1, trains_paths) == 0.
 
     k = inds1.index({'j': 0, 's': "B", 'd': 1})
-    k1 = inds1.index({'j': 1, 's': "A", 'd': 0})
+    l = inds1.index({'j': 1, 's': "A", 'd': 0})
 
-    assert P_Rosenberg_decomposition(k, k1, inds1, trains_paths) == 0.
-    assert P_Rosenberg_decomposition(k1, k, inds1, trains_paths) == 0.
+    assert P_Rosenberg_decomposition(k, l, inds1, trains_paths) == 0.
+    assert P_Rosenberg_decomposition(l, k, inds1, trains_paths) == 0.
 
 
 def test_penalties_and_couplings():
@@ -381,8 +381,8 @@ def test_penalties_and_couplings():
     inds1 = list(np.concatenate([inds, inds_z]))
 
     k = inds1.index({'j': 1, 's': "A", 'd': 0})
-    k1 = inds1.index({'j': 0, 'j1': 1, 's': "B", 'd': 4, 'd1': 8})
+    l = inds1.index({'j': 0, 'j1': 1, 's': "B", 'd': 4, 'd1': 8})
 
-    assert get_z_coupling(k, k1, inds1, p_pair, p_qubic, trains_timing, trains_paths) == 1.25
+    assert get_z_coupling(k, l, inds1, p_pair, p_qubic, trains_timing, trains_paths) == 1.25
 
     assert penalty(1, inds, d_max, trains_timing) == 0.2
