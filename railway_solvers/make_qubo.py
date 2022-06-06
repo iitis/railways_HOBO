@@ -156,7 +156,7 @@ def penalty_single_track(k, l, jsd_dicts, trains_timing, trains_paths):
             t2 = t
             t1 = jsd_dicts[l]["d"] + earliest_dep_time(S, trains_timing, j1, s1)
 
-            t += -tau(
+            t -= tau(
                 trains_timing, "pass", first_train=j1, first_station=s1, second_station=s
             )
             t2 += tau(
@@ -304,9 +304,19 @@ def P_switch_occupation(k, l, inds, trains_timing, trains_paths):
                             s, jpp, pairs_of_switch, trains_paths
                         ):
 
-                            p = penalty_switch(
-                                s, sp, spp, jp, jpp, k, l, inds, trains_timing, trains_paths
-                            )
+                            t = inds[k]["d"] + earliest_dep_time(S, trains_timing, jp, sp)
+                            if s != sp:
+                                t += tau(
+                                    trains_timing, "pass", first_train=jp, first_station=sp, second_station=s
+                                    )
+
+                            t1 = inds[l]["d"] + earliest_dep_time(S, trains_timing, jpp, spp)
+                            if s != spp:
+                                t1 += tau(
+                                    trains_timing, "pass", first_train=jpp, first_station=spp, second_station=s
+                                )
+
+                            p = penalty_switch(t, t1, trains_timing)
                             if p > 0:
                                 return p
 
@@ -314,26 +324,14 @@ def P_switch_occupation(k, l, inds, trains_timing, trains_paths):
 
 
 
-def penalty_switch(s, sp, spp, jp, jpp, k, l, inds, trains_timing, trains_paths):
+def penalty_switch(t, t1, trains_timing):
     """
     helper for P_switch_occupation
 
-
     Returns 0.0 or 1.0 as the contribution to Qmat[k, l]
     """
-    S = trains_paths["Paths"]
 
-    t = inds[k]["d"] + earliest_dep_time(S, trains_timing, jp, sp)
-    if s != sp:
-        t += tau(trains_timing, "pass", first_train=jp, first_station=sp, second_station=s)
-
-    t1 = inds[l]["d"] + earliest_dep_time(S, trains_timing, jpp, spp)
-    if s != spp:
-        t1 += tau(
-            trains_timing, "pass", first_train=jpp, first_station=spp, second_station=s
-        )
-
-    if -tau(trains_timing, "res") < t1 - t < tau(trains_timing, "res"):
+    if (-tau(trains_timing, "res") < t1 - t < tau(trains_timing, "res")):
         return 1.0
     return 0.0
 
@@ -381,7 +379,6 @@ def P_track_occupation_condition_quadratic_part(k, l, jsd_dicts, trains_timing, 
     j1 can leave s1 in such time, that j2 has to reliese s2, before j1 arrives to s2
 
     """
-    S = trains_paths["Paths"]
     # if trains have the same rolling stock we are not checking
     if not not_the_same_rolling_stock(jsd_dicts[k]["j"], jsd_dicts[l]["j"], trains_paths):
         return 0.0
@@ -389,7 +386,7 @@ def P_track_occupation_condition_quadratic_part(k, l, jsd_dicts, trains_timing, 
     if len(jsd_dicts[k].keys()) == 3 and len(jsd_dicts[l].keys()) == 5:
         return pair_of_one_track_constrains(jsd_dicts, k, l, trains_timing, trains_paths)
 
-    elif len(jsd_dicts[k].keys()) == 5 and len(jsd_dicts[l].keys()) == 3:
+    if len(jsd_dicts[k].keys()) == 5 and len(jsd_dicts[l].keys()) == 3:
         return pair_of_one_track_constrains(jsd_dicts, l, k, trains_timing, trains_paths)
 
     return 0.0
