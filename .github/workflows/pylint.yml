@@ -1,5 +1,10 @@
 name: Pylint
 
+
+[FORMAT]
+max-line-length=240
+
+
 on: [push]
 
 jobs:
