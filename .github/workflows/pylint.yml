@@ -19,6 +19,7 @@ jobs:
       run: |
         conda env create -f rail-hobo.yml
         conda activate rail-hobo
+        conda init bash
         python -m pip install --upgrade pip
         pip install pylint
     - name: Analysing the code with pylint
