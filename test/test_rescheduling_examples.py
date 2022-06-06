@@ -1,10 +1,7 @@
+# tests on examples concerning particular scenarios
 import numpy as np
 from railway_solvers import make_Q, energy
 
-
-"""
-tests on examples concerning particular scenarios
-"""
 
 ############## general input ###########
 # taus =
