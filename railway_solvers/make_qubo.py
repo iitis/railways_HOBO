@@ -358,17 +358,17 @@ def z_indices(trains_paths, d_max):
     return jsd_dicts, len(jsd_dicts)
 
 
-def P_track_occupation_condition_quadratic_part(k, k1, jsd_dicts, trains_timing, trains_paths):
+def P_track_occupation_condition_quadratic_part(k, l, jsd_dicts, trains_timing, trains_paths):
     """
     A quadratic part of track occupartion condition, first term in Eq. (53)
 
 
-    Returns not weighted contribution to Qmat[k, k1] = Qmat[k1, k]
+    Returns not weighted contribution to Qmat[k, l] = Qmat[l, k]
 
     Input:
     - trains_timing -- dict
     - trains_paths -- dict
-    - k, k1 -- indices
+    - k, l -- indices
     - jsd_dicts -- vector of {"j": j, "j1": j1, "s": s, "d": d, "d1": d1}
     form z_indices and {"j": j, "s": s, "d": d}  form indexing4qubo
 
@@ -381,14 +381,14 @@ def P_track_occupation_condition_quadratic_part(k, k1, jsd_dicts, trains_timing,
     """
     S = trains_paths["Paths"]
     # if trains have the same rolling stock we are not checking
-    if not not_the_same_rolling_stock(jsd_dicts[k]["j"], jsd_dicts[k1]["j"], trains_paths):
+    if not not_the_same_rolling_stock(jsd_dicts[k]["j"], jsd_dicts[l]["j"], trains_paths):
         return 0.0
 
-    if len(jsd_dicts[k].keys()) == 3 and len(jsd_dicts[k1].keys()) == 5:
-        return pair_of_one_track_constrains(jsd_dicts, k, k1, trains_timing, trains_paths)
+    if len(jsd_dicts[k].keys()) == 3 and len(jsd_dicts[l].keys()) == 5:
+        return pair_of_one_track_constrains(jsd_dicts, k, l, trains_timing, trains_paths)
 
-    elif len(jsd_dicts[k].keys()) == 5 and len(jsd_dicts[k1].keys()) == 3:
-        return pair_of_one_track_constrains(jsd_dicts, k1, k, trains_timing, trains_paths)
+    elif len(jsd_dicts[k].keys()) == 5 and len(jsd_dicts[l].keys()) == 3:
+        return pair_of_one_track_constrains(jsd_dicts, l, k, trains_timing, trains_paths)
 
     return 0.0
 
