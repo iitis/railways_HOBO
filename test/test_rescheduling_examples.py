@@ -240,9 +240,11 @@ def test_circ_Qmat():
 
 
 def test_Qmat_solved_on_DWave():
-    #### particular problem solved on the DWave ######
+    """
+    particular problem solved on the DWave
 
-    ###### original ############
+    original
+    """
 
 
     from inputs.DW_example import d_max, p_sum, p_pair, p_qubic, trains_timing, trains_paths
@@ -253,9 +255,12 @@ def test_Qmat_solved_on_DWave():
     assert np.array_equal(Q, np.load("test/files/Qfile.npz")["Q"])
 
 def test_Qmat_on_DWave_rerouted():
+    """
+    particular problem solved on the DWave
 
+    rerouted
+    """
 
-    # need to import file inputs/DWave_example
     from inputs.DW_example import d_max, p_sum, p_pair, p_qubic, trains_timing, trains_paths_rerouted
 
 
