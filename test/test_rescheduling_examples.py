@@ -298,17 +298,6 @@ def test_Qmat_solved_on_DWave():
 
     ############## rerouted  ############
 
-    """
-    j2 ->                                      <- j3
-    ...........c.......................c...c.......
-     [ S1 ]  .  .                       . .    [ S2 ]
-    .........c...c.......................c.........
-    j1 ->
-
-
-    """
-
-
     trains_paths_rerouted = {
         "skip_station": {
             "j3": "S1",  # we do not count train j3 leaving S1
