@@ -9,17 +9,15 @@ from railway_solvers import earliest_dep_time, indexing4qubo, make_Q, energy
 
 def visualise_Qubo_solution(solution, trains_timing, trains_paths, d_max):
     inds, q_bits = indexing4qubo(trains_paths, d_max)
-    l = q_bits
-    print("n.o. x vars", l)
+    print("n.o. x vars", q_bits)
     print("n.o. all var", np.size(solution))
 
-    S = trains_paths["Paths"]
-    for i in range(l):
+    for i in range(q_bits):
         if solution[i] == 1:
             j = inds[i]["j"]
             s = inds[i]["s"]
             d = inds[i]["d"]
-            t = d + earliest_dep_time(S, trains_timing, j, s)
+            t = d + earliest_dep_time(trains_paths["Paths"], trains_timing, j, s)
             print("train", j, "station", s, "delay", d, "dep. time", t)
     print("--------------------------------------------------")
 
