@@ -2,9 +2,11 @@ import numpy as np
 from railway_solvers import make_Q, energy
 
 
+"""
+tests on examples concerning particular scenarios
+"""
+
 ############## general input ###########
-
-
 # taus =
 #{"pass" : {"j_s_s1" : τ^pass(j,s,s1), ...} ==>  passing time of j s -> s1
 # "headway" : {"j_j1_s_s1" : τ^headway(j,j1,s,s1),  .... } ==> both j and j1 goes s->s1
@@ -40,8 +42,6 @@ from railway_solvers import make_Q, energy
     # "Jtrack": {"s": [[j, j1, j2] ..] ...} => at s j, j1 dna j2 uses the same track
     # "Jswitch": {"s": [{j: "out", j1: "in"}, ....]. ...}  => at s pair j and j1 uses the
     # same switch while j entering, and j1 leaving
-
-
 
 
 def test_headway_two_trains():

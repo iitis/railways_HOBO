@@ -3,11 +3,11 @@ from railway_solvers import subsequent_station, previous_station, occurs_as_pair
 from railway_solvers import tau, departure_station4switches, previous_train_from_Jround
 from railway_solvers import energy
 
+
 def test_pairs():
     assert occurs_as_pair(1, 2, [[1, 2, 3], [4], [5, 6]])
     assert occurs_as_pair(2, 1, [[1, 2, 3], [4], [5, 6]])
     assert not occurs_as_pair(1, 4, [[1, 2, 3], [4], [5, 6]])
-
 
 
 def test_trains_paths():
@@ -56,7 +56,6 @@ def test_auxiliary_trains_timing_functions():
 
 
 def test_helpers_of_trains_paths():
-
     trains_paths = {
         "Paths": {1: ["A", "B"], 2: ["B", "A"], 3: ["A", "B"]},
         "Jround": {"B": [[1, 2]]},
@@ -65,7 +64,7 @@ def test_helpers_of_trains_paths():
 
     assert not_the_same_rolling_stock(0, 1, trains_paths)
     assert not_the_same_rolling_stock(0, 1, trains_paths)
-    assert not not_the_same_rolling_stock(1, 2, trains_paths) 
+    assert not not_the_same_rolling_stock(1, 2, trains_paths)
 
     assert departure_station4switches("B", 1, {1: "out", 3: "out"}, trains_paths) == "B"
     assert departure_station4switches("B", 1, {1: "in", 3: "in"}, trains_paths) == "A"
