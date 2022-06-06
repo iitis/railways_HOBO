@@ -8,6 +8,7 @@ from railway_solvers import earliest_dep_time, indexing4qubo, make_Q, energy
 
 
 def visualise_Qubo_solution(solution, trains_timing, trains_paths, d_max):
+    """ visualise and pront timetable from the solution """
     inds, q_bits = indexing4qubo(trains_paths, d_max)
     print("n.o. x vars", q_bits)
     print("n.o. all var", np.size(solution))
