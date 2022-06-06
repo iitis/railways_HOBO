@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """ proceeds data from DWave, prints timetable from results """
 import pickle as pk
-import numpy as np
 import os
+import numpy as np
 from railway_solvers import earliest_dep_time, indexing4qubo, make_Q, energy
 
 
@@ -36,7 +36,8 @@ def load_train_solution(f, i):
 
 
 
-def print_trains_timings():
+def print_trains_timings(trains_timing, trains_paths, trains_paths_rerouted, d_max):
+    """ prints timetable """
     print("  >>>>>>>>>>>>>>>>>  original problem  <<<<<<<<<<<<<<<<<<<")
 
     print(" ##########   DW  results  ###################")
@@ -75,13 +76,10 @@ def print_trains_timings():
 
 
 
-def save_Qmat(d_max, trains_paths, trains_timing, f):
-
+def save_Qmat(d_max, p_sum, p_pair, p_qubic, trains_paths, trains_timing, f):
+    """ save computed Qmat"""
     if not os.path.isfile(f):
         print(f"save Q file to {f}")
-        p_sum = 2.5
-        p_pair = 1.25
-        p_qubic = 2.1
 
         Q = make_Q(d_max, p_sum, p_pair, p_qubic, trains_timing, trains_paths)
 
@@ -95,7 +93,7 @@ if __name__ == "__main__":
 
     from inputs.DW_example import d_max, p_sum, p_pair, p_qubic, trains_timing, trains_paths, trains_paths_rerouted
 
-    save_Qmat(d_max, trains_paths, trains_timing, 'files/Qfile.npz')
-    save_Qmat(d_max, trains_paths_rerouted, trains_timing, 'files/Qfile_r.npz')
+    save_Qmat(d_max, p_sum, p_pair, p_qubic, trains_paths, trains_timing, 'files/Qfile.npz')
+    save_Qmat(d_max, p_sum, p_pair, p_qubic, trains_paths_rerouted, trains_timing, 'files/Qfile_r.npz')
 
-    print_trains_timings()
+    print_trains_timings(trains_timing, trains_paths, trains_paths_rerouted, d_max)

@@ -46,8 +46,7 @@ def P_sum(k, l, jsd_dicts):
     if jsd_dicts[k]["j"] == jsd_dicts[l]["j"] and jsd_dicts[k]["s"] == jsd_dicts[l]["s"]:
         if jsd_dicts[k]["d"] == jsd_dicts[l]["d"]:
             return -1.0
-        else:
-            return 1.0
+        return 1.0
     return 0.0
 
 
@@ -78,7 +77,7 @@ def P_headway(k, l, jsd_dicts, trains_timing, trains_paths):
 
     s_next = subsequent_station(S[j], s)
 
-    if s == s1 and s_next != None and s_next == subsequent_station(S[j1], s1):
+    if s == s1 and s_next and s_next == subsequent_station(S[j1], s1):
 
         if s in trains_paths["Jd"].keys():
             if s_next in trains_paths["Jd"][s].keys():
@@ -330,8 +329,7 @@ def penalty_switch(t, t1, trains_timing):
 
     Returns 0.0 or 1.0 as the contribution to Qmat[k, l]
     """
-
-    if (-tau(trains_timing, "res") < t1 - t < tau(trains_timing, "res")):
+    if -tau(trains_timing, "res") < t1 - t < tau(trains_timing, "res"):
         return 1.0
     return 0.0
 

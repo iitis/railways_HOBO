@@ -59,7 +59,7 @@ def tau(
         return trains_timing["tau"][key][f"{first_train}_{first_station}"]
     if key == "res":
         return trains_timing["tau"]["res"]
-    return None
+    return -1000
 
 
 def penalty_weights(trains_timing, train, station):
@@ -87,16 +87,16 @@ def earliest_dep_time(S, trains_timing, train, station):
         return np.maximum(sched, unaviodable)
 
     s = previous_station(S[train], station)
-    τ_pass = tau(
+    tau_pass = tau(
         trains_timing,
         "pass",
         first_train=train,
         first_station=s,
         second_station=station,
     )
-    τ_stop = tau(trains_timing, "stop", first_train=train, first_station=station)
-    unavoidable = earliest_dep_time(S, trains_timing, train, s) + τ_pass
-    unavoidable += τ_stop
+    tau_stop = tau(trains_timing, "stop", first_train=train, first_station=station)
+    unavoidable = earliest_dep_time(S, trains_timing, train, s) + tau_pass
+    unavoidable += tau_stop
     return np.maximum(sched, unavoidable)
 
 
