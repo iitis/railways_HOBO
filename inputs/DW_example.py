@@ -35,10 +35,10 @@ trains_paths = {
     "Paths": {"j1": ["S1", "S2"], "j2": ["S1", "S2"], "j3": ["S2", "S1"]},
     "J": ["j1", "j2", "j3"],
     "Jd": {"S1": {"S2": [["j1", "j2"]]}, "S2": {"S1": [["j3"]]}},
-    "Josingle": dict(),
-    "Jround": dict(),
+    "Josingle": {},
+    "Jround": {},
     "Jtrack": {"S2": [["j1", "j2"]]},
-    "Jswitch": dict(),
+    "Jswitch": {},
     "add_swithes_at_s": ["S2"]  # additional τ(res.)(j, "B") in Eq. 18
 }
 
@@ -62,9 +62,9 @@ trains_paths_rerouted = {
     },
     "Paths": {"j1": ["S1", "S2"], "j2": ["S1", "S2"], "j3": ["S2", "S1"]},
     "J": ["j1", "j2", "j3"],
-    "Jd": dict(),
+    "Jd": {},
     "Josingle": {("S1", "S2"): [["j2", "j3"]]},
-    "Jround": dict(),
+    "Jround": {},
     "Jtrack": {"S2": [["j1", "j2"]]},
     "Jswitch": {"S1": [{"j2":"out", "j3":"in"}], "S2": [{"j2":"in", "j3":"out"}]}, # swithes from the single track line
     "add_swithes_at_s": ["S2"]  # additional τ(res.)(j, "B") in Eq. 18

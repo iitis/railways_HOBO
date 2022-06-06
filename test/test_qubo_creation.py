@@ -262,7 +262,7 @@ def test_track_occupation():
     trains_paths = {
         "Paths": {0: ["A", "B"], 1: ["A", "B"]},
         "J": [0, 1],
-        "Jround": dict(),  # have to check if the train does not colide with itself
+        "Jround": {},  # have to check if the train does not colide with itself
         "Jtrack": {"B": [[0, 1]]}
     }
 
@@ -359,10 +359,10 @@ def test_penalties_and_couplings():
         "Paths": {0: ["A", "B"], 1: ["A", "B"], 2: ["B", "A"]},
         "J": [0, 1, 2],
         "Jd": {"A": {"B": [[0, 1]]}, "B": {"A": [[2]]}},
-        "Josingle": dict(),
-        "Jround": dict(),
+        "Josingle": {},
+        "Jround": {},
         "Jtrack": {"B": [[0, 1]]},
-        "Jswitch": dict()
+        "Jswitch": {}
     }
 
     p_sum = 2.5

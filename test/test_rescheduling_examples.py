@@ -75,10 +75,10 @@ def test_headway_two_trains():
         "Paths": {"j1": ["A", "B"], "j2": ["A", "B"]}, # trains paths
         "J": ["j1", "j2"],  # set of all trains
         "Jd": {"A": {"B": [["j1", "j2"]]}}, # from A to B goes j1 and j2 on the same track
-        "Josingle": dict(),  # no single line condition
-        "Jround": dict(),  # no rolling stock circulation condition
-        "Jtrack": dict(), # no single track occupation condition
-        "Jswitch": dict() # no switch occupation condition
+        "Josingle": {},  # no single line condition
+        "Jround": {},  # no rolling stock circulation condition
+        "Jtrack": {}, # no single track occupation condition
+        "Jswitch": {} # no switch occupation condition
     }
 
     p_sum = 2
@@ -122,11 +122,11 @@ def  test_station_track_and_switches_two_trains():
     trains_paths = {
         "Paths": {0: ["A", "B"], 1: ["A", "B"]},
         "J": [0, 1],
-        "Jd": dict(),
-        "Josingle": dict(),
-        "Jround": dict(),
+        "Jd": {},
+        "Josingle": {},
+        "Jround": {},
         "Jtrack": {"B": [[0, 1]]},
-        "Jswitch": dict(),
+        "Jswitch": {},
         "add_swithes_at_s": ["B"]
     }
 
@@ -163,10 +163,10 @@ def test_deadlock_and_switches_two_trains():
     trains_paths = {
         "Paths": {0: ["A", "B"], 1: ["B", "A"]},
         "J": [0, 1],
-        "Jd": dict(),
+        "Jd": {},
         "Josingle": {("A","B"): [[0,1]]},
-        "Jround": dict(),
-        "Jtrack": dict(),
+        "Jround": {},
+        "Jtrack": {},
         "Jswitch": {"A": [{0: "out", 1: "in"}], "B": [{0: "in", 1: "out"}]}
     }
 
@@ -208,11 +208,11 @@ def test_circ_Qmat():
         },
         "Paths": {0: ["A", "B"], 1: ["B", "A"]},
         "J": [0, 1],
-        "Jd": dict(),
-        "Josingle": dict(),
+        "Jd": {},
+        "Josingle": {},
         "Jround": {"B": [[0,1]]},
-        "Jtrack": dict(),
-        "Jswitch": dict()
+        "Jtrack": {},
+        "Jswitch": {}
     }
 
     taus = {"pass": {"0_A_B": 4, "1_B_A": 8}, "prep": {"1_B": 2}}
