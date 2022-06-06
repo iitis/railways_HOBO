@@ -1,12 +1,9 @@
+""" test particular steps of QUBO creation """
 import numpy as np
 from railway_solvers import indexing4qubo, get_coupling, z_indices
 from railway_solvers import get_z_coupling, penalty, P_rolling_stock_circulation
 from railway_solvers import P_track_occupation_condition_quadratic_part, P_Rosenberg_decomposition
 from railway_solvers import P_switch_occupation, P_headway, P_minimal_stay, P_single_track_line
-
-
-####### testing particular QUBO element creation   ######
-
 
 
 def test_headway():

@@ -1,3 +1,4 @@
+""" calls DWave solver TODO AK please specify""" 
 from typing import KeysView
 import neal
 import numpy as np

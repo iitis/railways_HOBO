@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+""" proceeds data from DWave, prints timetable from results """
 import pickle as pk
 import numpy as np
 import os

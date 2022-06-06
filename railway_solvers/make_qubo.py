@@ -1,3 +1,5 @@
+
+""" main module, creates QUBO """
 import itertools
 import numpy as np
 from .helpers_functions import skip_station, not_the_same_rolling_stock, penalty_weights

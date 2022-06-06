@@ -1,5 +1,6 @@
-import numpy as np
 
+"""heplers for QUBO creation """
+import numpy as np
 
 def occurs_as_pair(a, b, vecofvec):
     """checks whether a and b occurs together in the same vector of vectors """
