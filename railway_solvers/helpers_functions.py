@@ -69,8 +69,7 @@ def penalty_weights(trains_timing, train, station):
     train_station = f"{train}_{station}"
     if train_station in trains_timing["penalty_weights"]:
         return trains_timing["penalty_weights"][train_station]
-    else:
-        return 0.0
+    return 0.0
 
 
 def earliest_dep_time(S, trains_timing, train, station):
@@ -86,19 +85,19 @@ def earliest_dep_time(S, trains_timing, train, station):
     if train_station in trains_timing["initial_conditions"]:
         unaviodable = trains_timing["initial_conditions"][train_station]
         return np.maximum(sched, unaviodable)
-    else:
-        s = previous_station(S[train], station)
-        τ_pass = tau(
-            trains_timing,
-            "pass",
-            first_train=train,
-            first_station=s,
-            second_station=station,
-        )
-        τ_stop = tau(trains_timing, "stop", first_train=train, first_station=station)
-        unavoidable = earliest_dep_time(S, trains_timing, train, s) + τ_pass
-        unavoidable += τ_stop
-        return np.maximum(sched, unavoidable)
+
+    s = previous_station(S[train], station)
+    τ_pass = tau(
+        trains_timing,
+        "pass",
+        first_train=train,
+        first_station=s,
+        second_station=station,
+    )
+    τ_stop = tau(trains_timing, "stop", first_train=train, first_station=station)
+    unavoidable = earliest_dep_time(S, trains_timing, train, s) + τ_pass
+    unavoidable += τ_stop
+    return np.maximum(sched, unavoidable)
 
 
 # helpers for trains set
