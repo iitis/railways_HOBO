@@ -27,22 +27,22 @@ def indexing4qubo(trains_paths, d_max):
 
 ################# constrains  #####################
 
-def P_sum(k, k1, jsd_dicts):
+def P_sum(k, l, jsd_dicts):
     """
     Sum to one conditon - Eq. (41)
 
     each train leaves each station (on its path) once and only once
 
     returns not wieghted (by peanlty constant) contribution from ∑_i x_i  = 1
-    constrain to Qmat[k, k1]
+    constrain to Qmat[k, l]
 
     Input:
-    k, k1 -- indices the the Qmat
+    k, l -- indices the the Qmat
     jsd_dicts -- vector {"j": j, "s": s, "d": d} -- train, station, delay.
     Each train leaves each station at one and only one delay.
     """
-    if jsd_dicts[k]["j"] == jsd_dicts[k1]["j"] and jsd_dicts[k]["s"] == jsd_dicts[k1]["s"]:
-        if jsd_dicts[k]["d"] == jsd_dicts[k1]["d"]:
+    if jsd_dicts[k]["j"] == jsd_dicts[l]["j"] and jsd_dicts[k]["s"] == jsd_dicts[l]["s"]:
+        if jsd_dicts[k]["d"] == jsd_dicts[l]["d"]:
             return -1.0
         else:
             return 1.0
@@ -393,7 +393,7 @@ def P_track_occupation_condition_quadratic_part(k, l, jsd_dicts, trains_timing, 
     return 0.0
 
 
-def pair_of_one_track_constrains(jsd_dicts, k, k1, trains_timing, trains_paths):
+def pair_of_one_track_constrains(jsd_dicts, k, l, trains_timing, trains_paths):
     """
     hepler for P_track_occupation_condition_quadratic_part
 
@@ -404,14 +404,14 @@ def pair_of_one_track_constrains(jsd_dicts, k, k1, trains_timing, trains_paths):
 
     jx = jsd_dicts[k]["j"]
     sx = jsd_dicts[k]["s"]
-    sz = jsd_dicts[k1]["s"]
+    sz = jsd_dicts[l]["s"]
     d = jsd_dicts[k]["d"]
-    d1 = jsd_dicts[k1]["d"]
-    d2 = jsd_dicts[k1]["d1"]
+    d1 = jsd_dicts[l]["d"]
+    d2 = jsd_dicts[l]["d1"]
 
     if sz == subsequent_station(S[jx], sx):
-        jz = jsd_dicts[k1]["j"]
-        jz1 = jsd_dicts[k1]["j1"]
+        jz = jsd_dicts[l]["j"]
+        jz1 = jsd_dicts[l]["j1"]
 
         j_rr = previous_train_from_Jround(trains_paths, jz, sz)
 
@@ -487,17 +487,17 @@ def one_track_constrains(jx, jz, jz1, sx, sz, d, d1, d2, trains_timing, trains_p
 
 
 
-def P_Rosenberg_decomposition(k, k1, jsd_dicts, trains_paths):
+def P_Rosenberg_decomposition(k, l, jsd_dicts, trains_paths):
     """
     The contribution to from Rosenberg decomposition of qubic term
     Eq. (52)
 
 
-    Returns not weighted contribution to Qmat[k,k1]=Qmat[k1, k].
-    Coificnets at k  ≠ k1 are divided by 2 because they are taken twice
+    Returns not weighted contribution to Qmat[k,l]=Qmat[l, k].
+    Coificnets at k  ≠ l are divided by 2 because they are taken twice
 
     Input:
-    - k, k1 -- indices of Qmat
+    - k, l -- indices of Qmat
     - jsd_dicts -- concatenated {"j": j, "s": s, "d": d}.... and
       {"j": j, "j1": j1, "s": s, "d": d, "d1": d1}....
       first part correspond to original varialbes second to auxiliary ones
@@ -509,48 +509,48 @@ def P_Rosenberg_decomposition(k, k1, jsd_dicts, trains_paths):
     S = trains_paths["Paths"]
 
     # diagonal for z-ts
-    if len(jsd_dicts[k].keys()) == len(jsd_dicts[k1].keys()) == 5:
-        if k == k1:
+    if len(jsd_dicts[k].keys()) == len(jsd_dicts[l].keys()) == 5:
+        if k == l:
             return 3.0
     # x vs z
-    if len(jsd_dicts[k].keys()) == 3 and len(jsd_dicts[k1].keys()) == 5:
+    if len(jsd_dicts[k].keys()) == 3 and len(jsd_dicts[l].keys()) == 5:
         jx = jsd_dicts[k]["j"]
         sx = jsd_dicts[k]["s"]
-        sz = jsd_dicts[k1]["s"]
+        sz = jsd_dicts[l]["s"]
         if sz == sx:
-            jz = jsd_dicts[k1]["j"]
-            jz1 = jsd_dicts[k1]["j1"]
+            jz = jsd_dicts[l]["j"]
+            jz1 = jsd_dicts[l]["j1"]
 
             # -1 because in Eq. (52) it is taken twice due to the symmetrisation
             if jx == jz:
-                if jsd_dicts[k]["d"] == jsd_dicts[k1]["d"]:
+                if jsd_dicts[k]["d"] == jsd_dicts[l]["d"]:
                     return -1.0
             if jx == jz1:
-                if jsd_dicts[k]["d"] == jsd_dicts[k1]["d1"]:
+                if jsd_dicts[k]["d"] == jsd_dicts[l]["d1"]:
                     return -1.0
 
     # z vs x
     # -1. 0 because in Eq. (52) it is taken twice due to the symmetrisation
-    if len(jsd_dicts[k].keys()) == 5 and len(jsd_dicts[k1].keys()) == 3:
-        jx = jsd_dicts[k1]["j"]
-        sx = jsd_dicts[k1]["s"]
+    if len(jsd_dicts[k].keys()) == 5 and len(jsd_dicts[l].keys()) == 3:
+        jx = jsd_dicts[l]["j"]
+        sx = jsd_dicts[l]["s"]
         sz = jsd_dicts[k]["s"]
         if sz == sx:
             jz = jsd_dicts[k]["j"]
             jz1 = jsd_dicts[k]["j1"]
             if jx == jz:
-                if jsd_dicts[k1]["d"] == jsd_dicts[k]["d"]:
+                if jsd_dicts[l]["d"] == jsd_dicts[k]["d"]:
                     return -1.0
             if jx == jz1:
-                if jsd_dicts[k1]["d"] == jsd_dicts[k]["d1"]:
+                if jsd_dicts[l]["d"] == jsd_dicts[k]["d1"]:
                     return -1.0
     # x vs x
     # 0.5 because in Eq. (52) it is taken twice due to the symmetrisation
-    if len(jsd_dicts[k].keys()) == 3 and len(jsd_dicts[k1].keys()) == 3:
+    if len(jsd_dicts[k].keys()) == 3 and len(jsd_dicts[l].keys()) == 3:
         s = jsd_dicts[k]["s"]
-        if s == jsd_dicts[k1]["s"]:
+        if s == jsd_dicts[l]["s"]:
             j = jsd_dicts[k]["j"]
-            j1 = jsd_dicts[k1]["j"]
+            j1 = jsd_dicts[l]["j"]
             sz = subsequent_station(S[j], s)
             if s in trains_paths["Jtrack"].keys():
                 if occurs_as_pair(j, j1, trains_paths["Jtrack"][s]):
@@ -580,46 +580,46 @@ def penalty(k, jsd_dicts, d_max, trains_timing):
     return jsd_dicts[k]["d"] * w
 
 
-def get_coupling(k, k1, jsd_dicts, p_sum, p_pair, trains_paths, trains_timing):
-    """ returns weighted hard constrains contributions to Qmat at k,k1 in the
+def get_coupling(k, l, jsd_dicts, p_sum, p_pair, trains_paths, trains_timing):
+    """ returns weighted hard constrains contributions to Qmat at k,l in the
     case where no auxiliary variables: headway, minimal stay, single_line, circulation, switch
 
 
     Input:
     - trains_timing - dict
     - trains_paths -- dict
-    - k, k1 -- indices
+    - k, l -- indices
     - jsd_dicts -- vector {"j": j, "s": s, "d": d}
-      of trains, stations, delays tied to index k of k1
+      of trains, stations, delays tied to index k of l
     - p_sum -- weight for sum to one constrain
     - p_pair -- weight for quadratic constrains (it is then doubled due to quadratisation)
     """
     # each train leave each station onse and only once
-    J = p_sum * P_sum(k, k1, jsd_dicts)
+    J = p_sum * P_sum(k, l, jsd_dicts)
     # quadratic conditions
-    J += p_pair * P_headway(k, k1, jsd_dicts, trains_timing, trains_paths)
-    J += p_pair * P_minimal_stay(k, k1, jsd_dicts, trains_timing, trains_paths)
-    J += p_pair * P_single_track_line(k, k1, jsd_dicts, trains_timing, trains_paths)
-    J += p_pair * P_rolling_stock_circulation(k, k1, jsd_dicts, trains_timing, trains_paths)
-    J += p_pair * P_switch_occupation(k, k1, jsd_dicts, trains_timing, trains_paths)
+    J += p_pair * P_headway(k, l, jsd_dicts, trains_timing, trains_paths)
+    J += p_pair * P_minimal_stay(k, l, jsd_dicts, trains_timing, trains_paths)
+    J += p_pair * P_single_track_line(k, l, jsd_dicts, trains_timing, trains_paths)
+    J += p_pair * P_rolling_stock_circulation(k, l, jsd_dicts, trains_timing, trains_paths)
+    J += p_pair * P_switch_occupation(k, l, jsd_dicts, trains_timing, trains_paths)
     return J
 
 
-def get_z_coupling(k, k1, jsd_dicts, p_pair, p_qubic, trains_timing, trains_paths):
-    """ returns weighted hard constrains contributions to Qmat at k,k1 in the
+def get_z_coupling(k, l, jsd_dicts, p_pair, p_qubic, trains_timing, trains_paths):
+    """ returns weighted hard constrains contributions to Qmat at k,l in the
     case where auxiliary variables are included, i.e. in the single track
     occupancy at station case.
 
     Input:
     trains_timing -- time trains_timing
-    k, k1 -- indexes on the Q matrix
+    k, l -- indexes on the Q matrix
     trains_paths -- train set dict containing trains paths
     jsd_dicts -- vector of {"j": j, "s": s, "d": d}  form indexing4qubo
     p_pair -- weight for quadratic constrains
     p_qubic -- weight for Rosenberg decomposition
     """
-    J = p_pair * P_track_occupation_condition_quadratic_part(k, k1, jsd_dicts, trains_timing, trains_paths)
-    J += p_qubic * P_Rosenberg_decomposition(k, k1, jsd_dicts, trains_paths)
+    J = p_pair * P_track_occupation_condition_quadratic_part(k, l, jsd_dicts, trains_timing, trains_paths)
+    J += p_qubic * P_Rosenberg_decomposition(k, l, jsd_dicts, trains_paths)
     return J
 
 
@@ -638,22 +638,22 @@ def make_Q(d_max, p_sum, p_pair, p_qubic, trains_timing, trains_paths):
 
     inds1 = np.concatenate([inds, inds_z])
 
-    l = q_bits
-    l1 = q_bits + q_bits_z
+    #l = q_bits
+    #l1 = q_bits + q_bits_z
 
-    Q = [[0.0 for _ in range(l1)] for _ in range(l1)]
+    Q = [[0.0 for _ in range(q_bits + q_bits_z)] for _ in range(q_bits + q_bits_z)]
 
     # add soft panalties (objective)
-    for k in range(l):
+    for k in range(q_bits):
         Q[k][k] += penalty(k, inds, d_max, trains_timing)
     # quadratic headway, minimal stay, single_line, circulation, switch
-    for k in range(l):
-        for k1 in range(l):
-            Q[k][k1] += get_coupling(k, k1, inds, p_sum, p_pair, trains_paths, trains_timing)
+    for k in range(q_bits):
+        for l in range(q_bits):
+            Q[k][l] += get_coupling(k, l, inds, p_sum, p_pair, trains_paths, trains_timing)
     # qubic track occupancy condition.
-    for k in range(l1):
-        for k1 in range(l1):
-            Q[k][k1] += get_z_coupling(
-                k, k1, inds1, p_pair, p_qubic, trains_timing, trains_paths
+    for k in range(q_bits + q_bits_z):
+        for l in range(q_bits + q_bits_z):
+            Q[k][l] += get_z_coupling(
+                k, l, inds1, p_pair, p_qubic, trains_timing, trains_paths
             )
     return Q
