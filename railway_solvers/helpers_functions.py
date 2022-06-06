@@ -16,8 +16,7 @@ def subsequent_station(path, s):
     k = path.index(s)
     if k == len(path) - 1:
         return None
-    else:
-        return path[k + 1]
+    return path[k + 1]
 
 
 def previous_station(path, s):
@@ -29,8 +28,7 @@ def previous_station(path, s):
     k = path.index(s)
     if k == 0:
         return None
-    else:
-        return path[k - 1]
+    return path[k - 1]
 
 
 
@@ -52,14 +50,14 @@ def tau(
         return trains_timing["tau"]["headway"][
             f"{first_train}_{second_train}_{first_station}_{second_station}"
         ]
-    elif key == "pass":
+    if key == "pass":
         string = f"{first_train}_{first_station}_{second_station}"
         return trains_timing["tau"][key][string]
-    elif key == "stop":
+    if key == "stop":
         return trains_timing["tau"][key][f"{first_train}_{first_station}"]
-    elif key == "prep":
+    if key == "prep":
         return trains_timing["tau"][key][f"{first_train}_{first_station}"]
-    elif key == "res":
+    if key == "res":
         return trains_timing["tau"]["res"]
     return None
 
@@ -122,9 +120,10 @@ def departure_station4switches(s, j, place_of_switch, trains_paths):
     """
     if place_of_switch[j] == "out":
         return s
-    elif place_of_switch[j] == "in":
+    if place_of_switch[j] == "in":
         S = trains_paths["Paths"]
         return previous_station(S[j], s)
+    return 0
 
 
 def skip_station(j,s, trains_paths):
@@ -133,9 +132,9 @@ def skip_station(j,s, trains_paths):
      """
     if "skip_station" not in trains_paths:
         return False
-    elif j not in trains_paths["skip_station"]:
+    if j not in trains_paths["skip_station"]:
         return False
-    elif s != trains_paths["skip_station"][j]:
+    if s != trains_paths["skip_station"][j]:
         return False
     return True
 
@@ -158,6 +157,7 @@ def previous_train_from_Jround(trains_paths,j, s):
 
 
 def energy(v, Q):
+    """compute energy from QUBO """
     if -1 in v:
         v = [(y + 1) / 2 for y in v]
     X = np.array(Q)
