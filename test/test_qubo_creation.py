@@ -93,16 +93,17 @@ def minimal_stay():
 
 def test_single_track_line():
 
-    taus = {"pass": {"1_A_B": 8, "2_B_A": 8}, "stop": {"0_B": 1, "1_B": 1}}
-
-    trains_timing = {"tau": taus, "initial_conditions": {"1_A": 1, "2_B": 8}}
-
     """
     1 ->                                    <- 2
     .............................................
     [ A ]                                   [ B ]
 
     """
+
+    taus = {"pass": {"1_A_B": 8, "2_B_A": 8}, "stop": {"0_B": 1, "1_B": 1}}
+
+    trains_timing = {"tau": taus, "initial_conditions": {"1_A": 1, "2_B": 8}}
+
 
     trains_paths_r = {
         "Paths": { 1: ["A", "B"], 2: ["B", "A"]},
@@ -214,28 +215,24 @@ def test_rolling_stock_circ():
     l = inds.index({'j': 1, 's': "B", 'd': 7})
 
     assert P_rolling_stock_circulation(k, l, inds, trains_timing, trains_paths) == 1.
-
     assert P_rolling_stock_circulation(l, k, inds, trains_timing, trains_paths) == 1.
 
     k = inds.index({'j': 0, 's': "A", 'd': 2})
     l = inds.index({'j': 1, 's': "B", 'd': 9})
 
     assert P_rolling_stock_circulation(k, l, inds, trains_timing, trains_paths) == 1.
-
     assert P_rolling_stock_circulation(l, k, inds, trains_timing, trains_paths) == 1.
 
     k = inds.index({'j': 0, 's': "A", 'd': 0})
     l = inds.index({'j': 1, 's': "B", 'd': 8})
 
     assert P_rolling_stock_circulation(k, l, inds, trains_timing, trains_paths) == 0.
-
     assert P_rolling_stock_circulation(l, k, inds, trains_timing, trains_paths) == 0.
 
     k = inds.index({'j': 0, 's': "A", 'd': 2})
     l = inds.index({'j': 1, 's': "B", 'd': 10})
 
     assert P_rolling_stock_circulation(k, l, inds, trains_timing, trains_paths) == 0.
-
     assert P_rolling_stock_circulation(l, k, inds, trains_timing, trains_paths) == 0.
 
 

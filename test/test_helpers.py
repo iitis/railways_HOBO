@@ -6,12 +6,14 @@ from railway_solvers import energy
 
 
 def test_pairs():
+    """helpers to compare if two elements occurs as the pair in the same vec. """
     assert occurs_as_pair(1, 2, [[1, 2, 3], [4], [5, 6]])
     assert occurs_as_pair(2, 1, [[1, 2, 3], [4], [5, 6]])
     assert not occurs_as_pair(1, 4, [[1, 2, 3], [4], [5, 6]])
 
 
 def test_trains_paths():
+    """ test  helpers of particular train timing"""
     S = {0: [0, 1, 2, 4], 1: [0, 1, 2], 2: [1, 0]}
 
     assert previous_station(S[0], 4) == 2
@@ -57,6 +59,7 @@ def test_auxiliary_trains_timing_functions():
 
 
 def test_helpers_of_trains_paths():
+    """ test helpers for particular features of trains path or relations"""
     trains_paths = {
         "Paths": {1: ["A", "B"], 2: ["B", "A"], 3: ["A", "B"]},
         "Jround": {"B": [[1, 2]]},
@@ -69,13 +72,14 @@ def test_helpers_of_trains_paths():
 
     assert departure_station4switches("B", 1, {1: "out", 3: "out"}, trains_paths) == "B"
     assert departure_station4switches("B", 1, {1: "in", 3: "in"}, trains_paths) == "A"
-    assert skip_station(1, "A", trains_paths) == False
+    assert not skip_station(1, "A", trains_paths)
 
     assert previous_train_from_Jround(trains_paths, 2, "B") == 1
     assert previous_train_from_Jround(trains_paths, 1, "B") is None
 
 
 def test_energy_computation():
+    """ test the computation of energy of QUBO"""
     v = [-1, 1, 1]
     Q = [[1. for _ in range(3)] for _ in range(3)]
     assert energy(v, Q) == 4.
