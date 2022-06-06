@@ -1,6 +1,0 @@
-[MASTER]
-disable=
-    C0103, #UPPER_CASE naming style
-
-[FORMAT]
-max-line-length=240
