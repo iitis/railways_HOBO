@@ -105,11 +105,9 @@ def test_single_track_line():
     """
 
     trains_paths_r = {
-        #"skip_station": {2: "A"},
         "Paths": { 1: ["A", "B"], 2: ["B", "A"]},
         "J": [1, 2],
         "Josingle": {("A", "B"): [[1,2]]}
-        #"Jtrack": {"B": [[0, 1]]}
     }
 
 
@@ -216,26 +214,29 @@ def test_rolling_stock_circ():
     l = inds.index({'j': 1, 's': "B", 'd': 7})
 
     assert P_rolling_stock_circulation(k, l, inds, trains_timing, trains_paths) == 1.
+
     assert P_rolling_stock_circulation(l, k, inds, trains_timing, trains_paths) == 1.
 
     k = inds.index({'j': 0, 's': "A", 'd': 2})
     l = inds.index({'j': 1, 's': "B", 'd': 9})
 
     assert P_rolling_stock_circulation(k, l, inds, trains_timing, trains_paths) == 1.
+
     assert P_rolling_stock_circulation(l, k, inds, trains_timing, trains_paths) == 1.
 
     k = inds.index({'j': 0, 's': "A", 'd': 0})
     l = inds.index({'j': 1, 's': "B", 'd': 8})
 
     assert P_rolling_stock_circulation(k, l, inds, trains_timing, trains_paths) == 0.
+
     assert P_rolling_stock_circulation(l, k, inds, trains_timing, trains_paths) == 0.
 
     k = inds.index({'j': 0, 's': "A", 'd': 2})
     l = inds.index({'j': 1, 's': "B", 'd': 10})
 
     assert P_rolling_stock_circulation(k, l, inds, trains_timing, trains_paths) == 0.
-    assert P_rolling_stock_circulation(l, k, inds, trains_timing, trains_paths) == 0.
 
+    assert P_rolling_stock_circulation(l, k, inds, trains_timing, trains_paths) == 0.
 
 
 def test_track_occupation():
