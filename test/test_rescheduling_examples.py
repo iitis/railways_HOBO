@@ -1,6 +1,7 @@
 import numpy as np
 from railway_solvers import make_Q, energy
 import os as os
+import sys
 
 
 ############## general input ###########
@@ -245,7 +246,9 @@ def test_Qmat_solved_on_DWave():
 
     ###### original ############
 
-    exec("../inputs/DW_example.py")
+    # exec("../inputs/DW_example.py")
+    # sys.path.insert(1, 'inputs/DW_example.py"')
+    from inputs.DW_example import d_max, p_sum, p_pair, p_qubic, trains_timing, trains_paths 
 
     # need to import file inputs/DWave_example
 
@@ -257,6 +260,7 @@ def test_Qmat_on_DWave_rerouted():
 
 
     # need to import file inputs/DWave_example
+    from inputs.DW_example import d_max, p_sum, p_pair, p_qubic, trains_timing, trains_paths_rerouted
 
 
     Q_r = make_Q(d_max,p_sum, p_pair, p_qubic, trains_timing, trains_paths_rerouted)
