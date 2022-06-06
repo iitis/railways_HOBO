@@ -246,11 +246,9 @@ def test_Qmat_solved_on_DWave():
 
     ###### original ############
 
-    # exec("../inputs/DW_example.py")
-    # sys.path.insert(1, 'inputs/DW_example.py"')
-    from inputs.DW_example import d_max, p_sum, p_pair, p_qubic, trains_timing, trains_paths 
 
-    # need to import file inputs/DWave_example
+    from inputs.DW_example import d_max, p_sum, p_pair, p_qubic, trains_timing, trains_paths
+
 
     Q = make_Q(d_max, p_sum, p_pair, p_qubic, trains_timing, trains_paths)
 
