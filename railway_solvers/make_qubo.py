@@ -49,17 +49,17 @@ def P_sum(k, k1, jsd_dicts):
     return 0.0
 
 
-def P_headway(k, k1, jsd_dicts, trains_timing, trains_paths):
+def P_headway(k, l, jsd_dicts, trains_timing, trains_paths):
     """
     Minimal headway condition - Eq. (42)
 
-    Returns 0.0 or 1.0, i.e. not weighted contribution to Qmat[k, k1]
-    and Qmat[k1, k]
+    Returns 0.0 or 1.0, i.e. not weighted contribution to Qmat[k, l]
+    and Qmat[l, k]
 
     Input:
-    - k, k1 -- indices
+    - k, l -- indices
     - jsd_dicts -- vector {"j": j, "s": s, "d": d}
-      of trains, stations, delays tied to index k or k1
+      of trains, stations, delays tied to index k or l
     - trains_timing - dict
     - trains_paths -- dict
 
@@ -70,9 +70,9 @@ def P_headway(k, k1, jsd_dicts, trains_timing, trains_paths):
 
     S = trains_paths["Paths"]
     j = jsd_dicts[k]["j"]
-    j1 = jsd_dicts[k1]["j"]
+    j1 = jsd_dicts[l]["j"]
     s = jsd_dicts[k]["s"]
-    s1 = jsd_dicts[k1]["s"]
+    s1 = jsd_dicts[l]["s"]
 
     s_next = subsequent_station(S[j], s)
 
@@ -83,7 +83,7 @@ def P_headway(k, k1, jsd_dicts, trains_timing, trains_paths):
                 if occurs_as_pair(j, j1, trains_paths["Jd"][s][s_next]):
 
                     t = jsd_dicts[k]["d"] + earliest_dep_time(S, trains_timing, j, s)
-                    t1 = jsd_dicts[k1]["d"] + earliest_dep_time(S, trains_timing, j1, s)
+                    t1 = jsd_dicts[l]["d"] + earliest_dep_time(S, trains_timing, j1, s)
 
                     A = -tau(
                         trains_timing,
@@ -108,17 +108,17 @@ def P_headway(k, k1, jsd_dicts, trains_timing, trains_paths):
     return 0.0
 
 
-def P_single_track_line(k, k1, jsd_dicts, trains_timing, trains_paths):
+def P_single_track_line(k, l, jsd_dicts, trains_timing, trains_paths):
     """
     Single track line condition - Eq. (43)
 
-    Returns 0.0 or 1.0, i.e. not weighted contribution to Qmat[k, k1]
-    and Qmat[k1, k]
+    Returns 0.0 or 1.0, i.e. not weighted contribution to Qmat[k, l]
+    and Qmat[l, k]
 
     Input:
-    - k, k1 -- indices
+    - k, l -- indices
     - jsd_dicts -- vector {"j": j, "s": s, "d": d}
-      of trains, stations, delays tied to index k or k1
+      of trains, stations, delays tied to index k or l
     - trains_timing - dict
     - trains_paths -- dict
 
@@ -129,21 +129,21 @@ def P_single_track_line(k, k1, jsd_dicts, trains_timing, trains_paths):
      """
 
     #symetrisation
-    p = penalty_single_track(k, k1, jsd_dicts, trains_timing, trains_paths)
-    p += penalty_single_track(k1, k, jsd_dicts, trains_timing, trains_paths)
+    p = penalty_single_track(k, l, jsd_dicts, trains_timing, trains_paths)
+    p += penalty_single_track(l, k, jsd_dicts, trains_timing, trains_paths)
     return p
 
-def penalty_single_track(k, k1, jsd_dicts, trains_timing, trains_paths):
+def penalty_single_track(k, l, jsd_dicts, trains_timing, trains_paths):
     """
     Helper for P_single_track_line
 
-    Returns 0.0 or 1.0 as the contribution to Qmat[k, k1]
+    Returns 0.0 or 1.0 as the contribution to Qmat[k, l]
     """
     S = trains_paths["Paths"]
     j = jsd_dicts[k]["j"]
-    j1 = jsd_dicts[k1]["j"]
+    j1 = jsd_dicts[l]["j"]
     s = jsd_dicts[k]["s"]
-    s1 = jsd_dicts[k1]["s"]
+    s1 = jsd_dicts[l]["s"]
 
     if not_the_same_rolling_stock(j, j1, trains_paths):
 
@@ -152,7 +152,7 @@ def penalty_single_track(k, k1, jsd_dicts, trains_timing, trains_paths):
         ][(s, s1)]:
             t = jsd_dicts[k]["d"] + earliest_dep_time(S, trains_timing, j, s)
             t2 = t
-            t1 = jsd_dicts[k1]["d"] + earliest_dep_time(S, trains_timing, j1, s1)
+            t1 = jsd_dicts[l]["d"] + earliest_dep_time(S, trains_timing, j1, s1)
 
             t += -tau(
                 trains_timing, "pass", first_train=j1, first_station=s1, second_station=s
@@ -166,41 +166,41 @@ def penalty_single_track(k, k1, jsd_dicts, trains_timing, trains_paths):
     return 0.0
 
 
-def P_minimal_stay(k, k1, jsd_dicts, trains_timing, trains_paths):
+def P_minimal_stay(k, l, jsd_dicts, trains_timing, trains_paths):
     """
     Minimal stay condition - Eq. (44)
 
-    Returns 0.0 or 1.0, i.e. not weighted contribution to Qmat[k, k1]
-    and Qmat[k1, k]
+    Returns 0.0 or 1.0, i.e. not weighted contribution to Qmat[k, l]
+    and Qmat[l, k]
 
     Input:
-    - k, k1 -- indices
+    - k, l -- indices
     - jsd_dicts -- vector {"j": j, "s": s, "d": d}
-      of trains, stations, delays tied to index k or k1
+      of trains, stations, delays tied to index k or l
     - trains_timing - dict
     - trains_paths -- dict
 
     """
     S = trains_paths["Paths"]
-    p = penalty_minimal_stay(k, k1, jsd_dicts, trains_timing, S)
-    p += penalty_minimal_stay(k1, k, jsd_dicts, trains_timing, S)
+    p = penalty_minimal_stay(k, l, jsd_dicts, trains_timing, S)
+    p += penalty_minimal_stay(l, k, jsd_dicts, trains_timing, S)
     return p
 
 
-def penalty_minimal_stay(k, k1, jsd_dicts, trains_timing, S):
+def penalty_minimal_stay(k, l, jsd_dicts, trains_timing, S):
     """
     Helper for P_minimal_stay
 
 
-    Returns 0.0 or 1.0 as the contribution to Qmat[k, k1]
+    Returns 0.0 or 1.0 as the contribution to Qmat[k, l]
     """
     j = jsd_dicts[k]["j"]
 
-    if j == jsd_dicts[k1]["j"]:
+    if j == jsd_dicts[l]["j"]:
         sp = jsd_dicts[k]["s"]
-        s = jsd_dicts[k1]["s"]
+        s = jsd_dicts[l]["s"]
         if s == subsequent_station(S[j], sp):
-            LHS = jsd_dicts[k1]["d"]
+            LHS = jsd_dicts[l]["d"]
             LHS += earliest_dep_time(S, trains_timing, j, s)
 
             RHS = jsd_dicts[k]["d"]
@@ -215,37 +215,37 @@ def penalty_minimal_stay(k, k1, jsd_dicts, trains_timing, S):
     return 0.0
 
 
-def P_rolling_stock_circulation(k, k1, inds, trains_timing, trains_paths):
+def P_rolling_stock_circulation(k, l, inds, trains_timing, trains_paths):
     """
     Rolling stock circulation condition - Eq. (45)
 
-    Returns 0.0 or 1.0, i.e. not weighted contribution to Qmat[k, k1]
-    and Qmat[k1, k]
+    Returns 0.0 or 1.0, i.e. not weighted contribution to Qmat[k, l]
+    and Qmat[l, k]
 
     Input:
-    - k, k1 -- indices
+    - k, l -- indices
     - jsd_dicts -- vector {"j": j, "s": s, "d": d}
-      of trains, stations, delays tied to index k or k1
+      of trains, stations, delays tied to index k or l
     - trains_timing - dict
     - trains_paths -- dict
 
     """
-    p = penalty_rolling_stock(k, k1, inds, trains_timing, trains_paths)
-    p += penalty_rolling_stock(k1, k, inds, trains_timing, trains_paths)
+    p = penalty_rolling_stock(k, l, inds, trains_timing, trains_paths)
+    p += penalty_rolling_stock(l, k, inds, trains_timing, trains_paths)
     return p
 
 
-def penalty_rolling_stock(k, k1, inds, trains_timing, trains_paths):
+def penalty_rolling_stock(k, l, inds, trains_timing, trains_paths):
     """
     Helper for P_rolling_stock_circulation
 
-    Returns 0.0 or 1.0 as the contribution to Qmat[k, k1]
+    Returns 0.0 or 1.0 as the contribution to Qmat[k, l]
     """
     S = trains_paths["Paths"]
     j = inds[k]["j"]
-    j1 = inds[k1]["j"]
+    j1 = inds[l]["j"]
     s = inds[k]["s"]
-    s1 = inds[k1]["s"]
+    s1 = inds[l]["s"]
 
     if s1 in trains_paths["Jround"].keys():
         if previous_station(S[j], s1) == s:
@@ -255,23 +255,23 @@ def penalty_rolling_stock(k, k1, inds, trains_timing, trains_paths):
                 LHS += tau(
                     trains_timing, "pass", first_train=j, first_station=s, second_station=s1
                 )
-                RHS = inds[k1]["d"] + earliest_dep_time(S, trains_timing, j1, s1)
+                RHS = inds[l]["d"] + earliest_dep_time(S, trains_timing, j1, s1)
                 if LHS > RHS:
                     return 1.0
     return 0.0
 
 
-def P_switch_occupation(k, k1, inds, trains_timing, trains_paths):
+def P_switch_occupation(k, l, inds, trains_timing, trains_paths):
     """
     Switch occupancy condition - Eq. (46)
 
-    Returns 0.0 or 1.0, i.e. not weighted contribution to Qmat[k, k1]
-    and Qmat[k1, k]
+    Returns 0.0 or 1.0, i.e. not weighted contribution to Qmat[k, l]
+    and Qmat[l, k]
 
     Input:
-    - k, k1 -- indices
+    - k, l -- indices
     - jsd_dicts -- vector {"j": j, "s": s, "d": d}
-      of trains, stations, delays tied to index k or k1
+      of trains, stations, delays tied to index k or l
     - trains_timing - dict
     - trains_paths -- dict
 
@@ -284,9 +284,9 @@ def P_switch_occupation(k, k1, inds, trains_timing, trains_paths):
 
     S = trains_paths["Paths"]
     jp = inds[k]["j"]
-    jpp = inds[k1]["j"]
+    jpp = inds[l]["j"]
     sp = inds[k]["s"]
-    spp = inds[k1]["s"]
+    spp = inds[l]["s"]
 
     if not_the_same_rolling_stock(jp, jpp, trains_paths): # train can not collide with itself
 
@@ -303,7 +303,7 @@ def P_switch_occupation(k, k1, inds, trains_timing, trains_paths):
                         ):
 
                             p = penalty_switch(
-                                s, sp, spp, jp, jpp, k, k1, inds, trains_timing, trains_paths
+                                s, sp, spp, jp, jpp, k, l, inds, trains_timing, trains_paths
                             )
                             if p > 0:
                                 return p
@@ -312,12 +312,12 @@ def P_switch_occupation(k, k1, inds, trains_timing, trains_paths):
 
 
 
-def penalty_switch(s, sp, spp, jp, jpp, k, k1, inds, trains_timing, trains_paths):
+def penalty_switch(s, sp, spp, jp, jpp, k, l, inds, trains_timing, trains_paths):
     """
     helper for P_switch_occupation
 
 
-    Returns 0.0 or 1.0 as the contribution to Qmat[k, k1]
+    Returns 0.0 or 1.0 as the contribution to Qmat[k, l]
     """
     S = trains_paths["Paths"]
 
@@ -325,7 +325,7 @@ def penalty_switch(s, sp, spp, jp, jpp, k, k1, inds, trains_timing, trains_paths
     if s != sp:
         t += tau(trains_timing, "pass", first_train=jp, first_station=sp, second_station=s)
 
-    t1 = inds[k1]["d"] + earliest_dep_time(S, trains_timing, jpp, spp)
+    t1 = inds[l]["d"] + earliest_dep_time(S, trains_timing, jpp, spp)
     if s != spp:
         t1 += tau(
             trains_timing, "pass", first_train=jpp, first_station=spp, second_station=s
