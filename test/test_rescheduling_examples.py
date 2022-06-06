@@ -296,7 +296,39 @@ def test_Qmat_solved_on_DWave():
 
     assert np.array_equal(Q, np.load("test/files/Qfile.npz")["Q"])
 
-    ############## rerouted  ############
+def test_Qmat_on_DWave_rerouted():
+
+
+
+
+    """
+    j2 ->                                      <- j3
+    ...........c.......................c...c.......
+     [ S1 ]  .  .                       . .    [ S2 ]
+    .........c...c.......................c.........
+    j1 ->
+
+
+    """
+
+
+    taus = {"pass": {"j1_S1_S2": 4, "j2_S1_S2": 8, "j3_S2_S1": 8},
+            "headway": {"j1_j2_S1_S2": 2, "j2_j1_S1_S2": 6},
+            "stop": {"j1_S2": 1, "j2_S2": 1},
+            "res": 1
+            }
+
+    trains_timing = {"tau": taus,
+                 "initial_conditions": {"j1_S1": 4, "j2_S1": 1, "j3_S2": 8},
+                 "penalty_weights": {"j1_S1": 2, "j2_S1": 1, "j3_S2": 1}}
+
+    p_sum = 2.5
+    p_pair = 1.25
+    p_qubic = 2.1
+
+    d_max = 10
+
+
 
     trains_paths_rerouted = {
         "skip_station": {
