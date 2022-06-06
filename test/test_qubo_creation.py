@@ -39,7 +39,7 @@ def test_headway():
         "Jd": {"A": {"B": [[0, 1]]}}
     }
 
-    inds, q_bits = indexing4qubo(trains_paths, 10)
+    inds, _ = indexing4qubo(trains_paths, 10)
 
     k = inds.index({'j': 0, 's': "A", 'd': 3})
     l = inds.index({'j': 1, 's': "A", 'd': 0})
@@ -78,7 +78,7 @@ def minimal_stay():
         "Jd": {"A": {"B": [[0]]}}
     }
 
-    inds, q_bits = indexing4qubo(trains_paths, 10)
+    inds, _ = indexing4qubo(trains_paths, 10)
 
     # can not make up delay by shortening the stay at "B"
     k = inds.index({'j': 0, 's': "A", 'd': 2})
@@ -116,7 +116,7 @@ def test_single_track_line():
     }
 
 
-    inds, q_bits = indexing4qubo(trains_paths_r, 10)
+    inds, _ = indexing4qubo(trains_paths_r, 10)
 
 
     k = inds.index({'j': 1, 's': "A", 'd': 0})
@@ -168,7 +168,7 @@ def test_switches():
     trains_timing = {"tau": taus,
                  "initial_conditions": { "1_A": 1, "2_B": 8}}
 
-    inds, q_bits = indexing4qubo(trains_paths_r, 10)
+    inds, _ = indexing4qubo(trains_paths_r, 10)
 
     k = inds.index({'j': 1, 's': "A", 'd': 0})
     l = inds.index({'j': 2, 's': "B", 'd': 0})
@@ -213,7 +213,7 @@ def test_rolling_stock_circ():
                  "initial_conditions": {"0_A": 3, "1_B": 1}}
 
 
-    inds, q_bits = indexing4qubo(trains_paths, 10)
+    inds, _ = indexing4qubo(trains_paths, 10)
 
     k = inds.index({'j': 0, 's': "A", 'd': 0})
     l = inds.index({'j': 1, 's': "B", 'd': 7})
@@ -266,7 +266,7 @@ def test_track_occupation():
         "Jtrack": {"B": [[0, 1]]}
     }
 
-    inds, q_bits = indexing4qubo(trains_paths, 10)
+    inds, _ = indexing4qubo(trains_paths, 10)
     inds_z, l = z_indices(trains_paths, 10)
 
     inds1 = list(np.concatenate([inds, inds_z]))
@@ -371,7 +371,7 @@ def test_penalties_and_couplings():
 
     d_max = 10
 
-    inds, q_bits = indexing4qubo(trains_paths, d_max)
+    inds, _ = indexing4qubo(trains_paths, d_max)
     assert get_coupling(0, 0, inds, p_sum, p_pair,
                        trains_paths, trains_timing) == -2.5
     assert get_coupling(0, 24, inds, p_sum, p_pair,
