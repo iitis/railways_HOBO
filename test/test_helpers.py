@@ -13,7 +13,7 @@ def test_pairs():
 
 
 def test_trains_paths():
-    """ test  helpers of particular train timing"""
+    """ helpers on trains paths"""
     S = {0: [0, 1, 2, 4], 1: [0, 1, 2], 2: [1, 0]}
 
     assert previous_station(S[0], 4) == 2
@@ -25,6 +25,7 @@ def test_trains_paths():
 
 
 def test_auxiliary_trains_timing_functions():
+    """ test  helpers of particular train timing"""
     taus = {
         "pass": {"0_0_1": 5, "1_0_1": 7, "2_1_0": 10},
         "headway": {
