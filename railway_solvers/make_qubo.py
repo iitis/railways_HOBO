@@ -200,17 +200,17 @@ def penalty_minimal_stay(k, l, jsd_dicts, trains_timing, S):
         sp = jsd_dicts[k]["s"]
         s = jsd_dicts[l]["s"]
         if s == subsequent_station(S[j], sp):
-            LHS = jsd_dicts[l]["d"]
-            LHS += earliest_dep_time(S, trains_timing, j, s)
+            lhs = jsd_dicts[l]["d"]
+            lhs += earliest_dep_time(S, trains_timing, j, s)
 
-            RHS = jsd_dicts[k]["d"]
-            RHS += earliest_dep_time(S, trains_timing, j, sp)
-            RHS += tau(
+            rhs = jsd_dicts[k]["d"]
+            rhs += earliest_dep_time(S, trains_timing, j, sp)
+            rhs += tau(
                 trains_timing, "pass", first_train=j, first_station=sp, second_station=s
             )
-            RHS += tau(trains_timing, "stop", first_train=j, first_station=s)
+            rhs += tau(trains_timing, "stop", first_train=j, first_station=s)
 
-            if LHS < RHS:
+            if lhs < rhs:
                 return 1.0
     return 0.0
 
@@ -250,13 +250,13 @@ def penalty_rolling_stock(k, l, inds, trains_timing, trains_paths):
     if s1 in trains_paths["Jround"].keys():
         if previous_station(S[j], s1) == s:
             if [j, j1] in trains_paths["Jround"][s1]:
-                LHS = inds[k]["d"] + earliest_dep_time(S, trains_timing, j, s)
-                LHS += tau(trains_timing, "prep", first_train=j1, first_station=s1)
-                LHS += tau(
+                lhs = inds[k]["d"] + earliest_dep_time(S, trains_timing, j, s)
+                lhs += tau(trains_timing, "prep", first_train=j1, first_station=s1)
+                lhs += tau(
                     trains_timing, "pass", first_train=j, first_station=s, second_station=s1
                 )
-                RHS = inds[l]["d"] + earliest_dep_time(S, trains_timing, j1, s1)
-                if LHS > RHS:
+                rhs = inds[l]["d"] + earliest_dep_time(S, trains_timing, j1, s1)
+                if lhs > rhs:
                     return 1.0
     return 0.0
 
