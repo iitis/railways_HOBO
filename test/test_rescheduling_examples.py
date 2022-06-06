@@ -1,7 +1,5 @@
 import numpy as np
 from railway_solvers import make_Q, energy
-import os as os
-import sys
 
 
 ############## general input ###########
