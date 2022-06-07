@@ -1,6 +1,6 @@
 """tests on examples concerning particular scenarios """
 import numpy as np
-from railway_solvers import make_Q, energy
+from railway_solvers import make_Qubo, energy
 
 
 ############## general input ###########
@@ -42,46 +42,51 @@ from railway_solvers import make_Q, energy
 
 
 def test_headway_two_trains():
-
     """
     two trains, j1 and j2 going one way A -> B test headway condition
-
-
-     j2 ->
-     j1 ->  ------------------------------
-             [ A ]                    [ B ]
-
-    j1, j2 - trains
-    [A], [B] - stations
-    -----    - line
     """
 
-    # if j1 go first from A to B and j2 second there is the headway between of 2,
-    # if j2 go first form A to B and j1 second there is the headway between of 6
+    class Headway_problem():
+        """
 
-    taus = {"pass": {"j1_A_B": 4, "j2_A_B": 8},
-            "headway": {"j1_j2_A_B": 2, "j2_j1_A_B": 6},
-            "stop": {"j1_B": 1, "j2_B": 1}, "res": 1}
-    trains_timing = {"tau": taus,
-                 "initial_conditions": {"j1_A": 3, "j2_A": 1}, # leaving times
-                 "penalty_weights": {"j1_A": 2, "j2_A": 0.5}}  # these are w_j
+         j2 ->
+         j1 ->  ------------------------------
+                 [ A ]                    [ B ]
 
-    trains_paths = {
-        "Paths": {"j1": ["A", "B"], "j2": ["A", "B"]}, # trains paths
-        "J": ["j1", "j2"],  # set of all trains
-        "Jd": {"A": {"B": [["j1", "j2"]]}}, # from A to B goes j1 and j2 on the same track
-        "Josingle": {},  # no single line condition
-        "Jround": {},  # no rolling stock circulation condition
-        "Jtrack": {}, # no single track occupation condition
-        "Jswitch": {} # no switch occupation condition
-    }
+        j1, j2 - trains
+        [A], [B] - stations
+        -----    - line
+        """
 
-    p_sum = 2
-    p_pair = 1.
-    p_qubic = 2.
-    d_max = 5
+        def __init__(self):
+            """
+            if j1 go first from A to B and j2 second there is the headway between of 2,
+            if j2 go first form A to B and j1 second there is the headway between of 6
+            """
 
-    Q = make_Q(d_max, p_sum, p_pair, p_qubic, trains_timing, trains_paths)
+            self.taus = {"pass": {"j1_A_B": 4, "j2_A_B": 8},
+                    "headway": {"j1_j2_A_B": 2, "j2_j1_A_B": 6},
+                    "stop": {"j1_B": 1, "j2_B": 1}, "res": 1}
+            self.trains_timing = {"tau": self.taus,
+                         "initial_conditions": {"j1_A": 3, "j2_A": 1}, # leaving times
+                         "penalty_weights": {"j1_A": 2, "j2_A": 0.5}}  # these are w_j
+
+            self.trains_paths = {
+                "Paths": {"j1": ["A", "B"], "j2": ["A", "B"]}, # trains paths
+                "J": ["j1", "j2"],  # set of all trains
+                "Jd": {"A": {"B": [["j1", "j2"]]}}, # from A to B goes j1 and j2 on the same track
+                "Josingle": {},  # no single line condition
+                "Jround": {},  # no rolling stock circulation condition
+                "Jtrack": {}, # no single track occupation condition
+                "Jswitch": {} # no switch occupation condition
+            }
+
+            self.p_sum = 2
+            self.p_pair = 1.
+            self.p_qubic = 2.
+            self.d_max = 5
+
+    Q = make_Qubo(Headway_problem())
 
     assert np.array_equal(Q, np.load("test/files/Qfile_one_way.npz")["Q"])
 
@@ -93,44 +98,49 @@ def test_headway_two_trains():
 def  test_station_track_and_switches_two_trains():
     """
     Test single track at station and swithes constrain, switches simplified
-
-    swith - c
-
-    tracks - ......
-
-
-                                                  .
-      1 ->                                       .
-    ..0 -> ...................................  c  .0-> ..  1->.....
-
-      A                                                  B
-                                                    simplifies swith condition
     """
+    class Stations_switches_problem():
+        """
 
-    taus = {"pass": {"0_A_B": 4, "1_A_B": 4},
-            "headway": {"0_1_A_B": 2, "1_0_B_A": 4},
-            "stop": {"0_B": 1, "1_B": 1}, "res": 2}
-    trains_timing = {"tau": taus,
-                 "initial_conditions": {"0_A": 1, "1_A": 1},
-                 "penalty_weights": {"0_A": 2, "1_A": 0.5}}
+        swith - c
 
-    trains_paths = {
-        "Paths": {0: ["A", "B"], 1: ["A", "B"]},
-        "J": [0, 1],
-        "Jd": {},
-        "Josingle": {},
-        "Jround": {},
-        "Jtrack": {"B": [[0, 1]]},
-        "Jswitch": {},
-        "add_swithes_at_s": ["B"]
-    }
+        tracks - ......
 
-    p_sum = 2
-    p_pair = 1.
-    p_qubic = 2.
-    d_max = 5
 
-    Q = make_Q(d_max, p_sum, p_pair, p_qubic, trains_timing, trains_paths)
+                                                      .
+          1 ->                                       .
+        ..0 -> ...................................  c  .0-> ..  1->.....
+
+          A                                                  B
+                                                        simplifies swith condition
+        """
+        def __init__(self):
+            """ parmaeters """
+
+            self.taus = {"pass": {"0_A_B": 4, "1_A_B": 4},
+                    "headway": {"0_1_A_B": 2, "1_0_B_A": 4},
+                    "stop": {"0_B": 1, "1_B": 1}, "res": 2}
+            self.trains_timing = {"tau": self.taus,
+                         "initial_conditions": {"0_A": 1, "1_A": 1},
+                         "penalty_weights": {"0_A": 2, "1_A": 0.5}}
+
+            self.trains_paths = {
+                "Paths": {0: ["A", "B"], 1: ["A", "B"]},
+                "J": [0, 1],
+                "Jd": {},
+                "Josingle": {},
+                "Jround": {},
+                "Jtrack": {"B": [[0, 1]]},
+                "Jswitch": {},
+                "add_swithes_at_s": ["B"]
+            }
+
+            self.p_sum = 2
+            self.p_pair = 1.
+            self.p_qubic = 2.
+            self.d_max = 5
+
+    Q = make_Qubo(Stations_switches_problem())
 
     assert np.array_equal(Q, np.load("test/files/Qfile_track.npz")["Q"])
 
@@ -143,41 +153,44 @@ def test_deadlock_and_switches_two_trains():
     """
     Two trains going opposite direction on single track line
     and swithes constrain
-
-    swith - c
-
-    tracks - ......
-
-
-
-    ..........                                        .. <- 1 ....
-        A      .                                    .      B
-    ..0 -> .... c ................................  c  ..........
-
     """
-    trains_paths = {
-        "Paths": {0: ["A", "B"], 1: ["B", "A"]},
-        "J": [0, 1],
-        "Jd": {},
-        "Josingle": {("A","B"): [[0,1]]},
-        "Jround": {},
-        "Jtrack": {},
-        "Jswitch": {"A": [{0: "out", 1: "in"}], "B": [{0: "in", 1: "out"}]}
-    }
+    class Single_track_switch_problem():
+        """
+        ..........                                        .. <- 1 ....
+            A      .                                    .      B
+        ..0 -> .... c ................................  c  ..........
 
-    taus = {"pass": {"0_A_B": 4, "1_B_A": 8},
-            "stop": {"0_B": 1, "1_A": 1}, "res": 1}
+        swith - c
+        0, 1- trains
+        A, B - stations
+        tracks - ......
 
-    trains_timing = {"tau": taus,
-                "initial_conditions": {"0_A": 3, "1_B": 1},
-                "penalty_weights": {"0_A": 2, "1_B": 0.5}}
+        """
+        def __init__(self):
+            """ parameters """
+            self.trains_paths = {
+                "Paths": {0: ["A", "B"], 1: ["B", "A"]},
+                "J": [0, 1],
+                "Jd": {},
+                "Josingle": {("A","B"): [[0,1]]},
+                "Jround": {},
+                "Jtrack": {},
+                "Jswitch": {"A": [{0: "out", 1: "in"}], "B": [{0: "in", 1: "out"}]}
+            }
 
-    p_sum = 2.
-    p_pair = 1.
-    p_qubic = 2.
-    d_max = 10
+            self.taus = {"pass": {"0_A_B": 4, "1_B_A": 8},
+                    "stop": {"0_B": 1, "1_A": 1}, "res": 1}
 
-    Q = make_Q(d_max, p_sum, p_pair, p_qubic, trains_timing, trains_paths)
+            self.trains_timing = {"tau": self.taus,
+                        "initial_conditions": {"0_A": 3, "1_B": 1},
+                        "penalty_weights": {"0_A": 2, "1_B": 0.5}}
+
+            self.p_sum = 2.
+            self.p_pair = 1.
+            self.p_qubic = 2.
+            self.d_max = 10
+
+    Q = make_Qubo(Single_track_switch_problem())
 
     assert np.array_equal(Q, np.load("test/files/Qfile_two_ways.npz")["Q"])
 
@@ -187,40 +200,43 @@ def test_deadlock_and_switches_two_trains():
 
 
 def test_circ_Qmat():
+    """ test rolling stock circulation """
 
-    """
-    At station B train 0 terminates and turns intro train 1 that starts there
+    class Circulation_problem():
+        """
+        At station B train 0 terminates and turns intro train 1 that starts there
 
-    ....0 -> ..................................0 <-> 1.......
-    A                                            B
+        ....0 -> ..................................0 <-> 1.......
+        A                                            B
 
-    """
+        """
+        def __init__(self):
+            """ parameters """
+            self.trains_paths = {
+                "skip_station": {
+                    0: "B",
+                    1: "A",
+                },
+                "Paths": {0: ["A", "B"], 1: ["B", "A"]},
+                "J": [0, 1],
+                "Jd": {},
+                "Josingle": {},
+                "Jround": {"B": [[0,1]]},
+                "Jtrack": {},
+                "Jswitch": {}
+            }
 
-    trains_paths = {
-        "skip_station": {
-            0: "B",
-            1: "A",
-        },
-        "Paths": {0: ["A", "B"], 1: ["B", "A"]},
-        "J": [0, 1],
-        "Jd": {},
-        "Josingle": {},
-        "Jround": {"B": [[0,1]]},
-        "Jtrack": {},
-        "Jswitch": {}
-    }
+            self.taus = {"pass": {"0_A_B": 4, "1_B_A": 8}, "prep": {"1_B": 2}}
+            self.trains_timing = {"tau": self.taus,
+                         "initial_conditions": {"0_A": 3, "1_B": 1},
+                         "penalty_weights": {"0_A": 2, "1_B": 0.5}}
 
-    taus = {"pass": {"0_A_B": 4, "1_B_A": 8}, "prep": {"1_B": 2}}
-    trains_timing = {"tau": taus,
-                 "initial_conditions": {"0_A": 3, "1_B": 1},
-                 "penalty_weights": {"0_A": 2, "1_B": 0.5}}
+            self.p_sum = 2.
+            self.p_pair = 1.
+            self.p_qubic = 2.
+            self.d_max = 10
 
-    p_sum = 2.
-    p_pair = 1.
-    p_qubic = 2.
-    d_max = 10
-
-    Q = make_Q(d_max, p_sum, p_pair, p_qubic, trains_timing, trains_paths)
+    Q = make_Qubo(Circulation_problem())
 
 
     assert np.array_equal(Q, np.load("test/files/Qfile_circ.npz")["Q"])
@@ -244,10 +260,12 @@ def test_Qmat_solved_on_DWave():
     """
 
 
-    from inputs.DW_example import d_max, p_sum, p_pair, p_qubic, trains_timing, trains_paths
+    from inputs.DW_example import DWave_problem
+
+    Problem = DWave_problem(rerouted = False)
 
 
-    Q = make_Q(d_max, p_sum, p_pair, p_qubic, trains_timing, trains_paths)
+    Q = make_Qubo(Problem)
 
     assert np.array_equal(Q, np.load("test/files/Qfile.npz")["Q"])
 
@@ -258,9 +276,10 @@ def test_Qmat_on_DWave_rerouted():
     rerouted
     """
 
-    from inputs.DW_example import d_max, p_sum, p_pair, p_qubic, trains_timing, trains_paths_rerouted
+    from inputs.DW_example import DWave_problem
 
+    Problem = DWave_problem(rerouted = True)
 
-    Q_r = make_Q(d_max,p_sum, p_pair, p_qubic, trains_timing, trains_paths_rerouted)
+    Q_r = make_Qubo(Problem)
 
     assert np.array_equal(Q_r, np.load("test/files/Qfile_r.npz")["Q"])

@@ -558,39 +558,43 @@ def P_Rosenberg_decomposition(k, l, jsd_dicts, trains_paths):
 
 # panalties and objective
 
-def penalty(k, jsd_dicts, d_max, trains_timing):
+def penalty(k, jsd_dicts, Problem):
     """
     Soft constrians,
 
     Returns weighted contribution to Qmat[k, k] drom objective
 
     Input:
-    - trains_timing - dict
     - k -- index (of diagonal)
     - jsd_dicts -- vector {"j": j, "s": s, "d": d}
       of trains, stations, delays tied to index k
-    - dmax -- maximal secondary delay
+    - Problem.trains_timing -- time trains_timing
+    - Problem.dmax -- maximal secondary delay
     """
     j = jsd_dicts[k]["j"]
     s = jsd_dicts[k]["s"]
-    w = penalty_weights(trains_timing, j, s) / d_max
+    w = penalty_weights(Problem.trains_timing, j, s) / Problem.d_max
     return jsd_dicts[k]["d"] * w
 
 
-def get_coupling(k, l, jsd_dicts, p_sum, p_pair, trains_paths, trains_timing):
+def get_coupling(k, l, jsd_dicts, Problem):
     """ returns weighted hard constrains contributions to Qmat at k,l in the
     case where no auxiliary variables: headway, minimal stay, single_line, circulation, switch
 
 
     Input:
-    - trains_timing - dict
-    - trains_paths -- dict
     - k, l -- indices
     - jsd_dicts -- vector {"j": j, "s": s, "d": d}
       of trains, stations, delays tied to index k of l
-    - p_sum -- weight for sum to one constrain
-    - p_pair -- weight for quadratic constrains (it is then doubled due to quadratisation)
+    - Problem.trains_timing -- time trains_timing
+    - Problem.trains_paths -- train set dict containing trains paths
+    - Problem.p_sum -- weight for sum to one constrain
+    - Problem.p_pair -- weight for quadratic constrains (it is then doubled due to quadratisation)
     """
+    p_sum = Problem.p_sum
+    p_pair = Problem.p_pair
+    trains_paths = Problem.trains_paths
+    trains_timing = Problem.trains_timing
     # each train leave each station onse and only once
     J = p_sum * P_sum(k, l, jsd_dicts)
     # quadratic conditions
@@ -602,36 +606,39 @@ def get_coupling(k, l, jsd_dicts, p_sum, p_pair, trains_paths, trains_timing):
     return J
 
 
-def get_z_coupling(k, l, jsd_dicts, p_pair, p_qubic, trains_timing, trains_paths):
+def get_z_coupling(k, l, jsd_dicts, Problem):
     """ returns weighted hard constrains contributions to Qmat at k,l in the
     case where auxiliary variables are included, i.e. in the single track
     occupancy at station case.
 
     Input:
-    trains_timing -- time trains_timing
-    k, l -- indexes on the Q matrix
-    trains_paths -- train set dict containing trains paths
-    jsd_dicts -- vector of {"j": j, "s": s, "d": d}  form indexing4qubo
-    p_pair -- weight for quadratic constrains
-    p_qubic -- weight for Rosenberg decomposition
+
+    - k, l -- indexes on the Q matrix
+    - jsd_dicts -- vector of {"j": j, "s": s, "d": d}  form indexing4qubo
+    - Problem.trains_timing -- time trains_timing
+    - Problem.trains_paths -- train set dict containing trains paths
+    - Problem.p_pair -- weight for quadratic constrains
+    - Problem.p_qubic -- weight for Rosenberg decomposition
     """
-    J = p_pair * P_track_occupation_condition_quadratic_part(k, l, jsd_dicts, trains_timing, trains_paths)
-    J += p_qubic * P_Rosenberg_decomposition(k, l, jsd_dicts, trains_paths)
+    trains_timing = Problem.trains_timing
+    trains_paths = Problem.trains_paths
+    J = Problem.p_pair * P_track_occupation_condition_quadratic_part(k, l, jsd_dicts, trains_timing, trains_paths)
+    J += Problem.p_qubic * P_Rosenberg_decomposition(k, l, jsd_dicts, trains_paths)
     return J
 
 
-def make_Q(d_max, p_sum, p_pair, p_qubic, trains_timing, trains_paths):
+def make_Qubo(Problem):
     """returns symmetric Q matrix for the particular problem encoded in
-    trains_paths and trains_timing
+    Problem.trains_paths and Problem.trains_timing
 
     Parameters
-    dmax -- maximal secondary delay
-    p_sum -- panalty for ∑_i x_i = 1 hard constrains
-    p_pair -- penalty for ∑_i,j x_i x_j = 0 hard constrains
-    p_qubic -- weight for Rosenberg decomposition of qubic term
+    Problem.dmax -- maximal secondary delay
+    Problem.p_sum -- panalty for ∑_i x_i = 1 hard constrains
+    Problem.p_pair -- penalty for ∑_i,j x_i x_j = 0 hard constrains
+    Problem.p_qubic -- weight for Rosenberg decomposition of qubic term
     """
-    inds, q_bits = indexing4qubo(trains_paths, d_max) # indices of vars
-    inds_z, q_bits_z = z_indices(trains_paths, d_max) # indices of auxiliary vars.
+    inds, q_bits = indexing4qubo(Problem.trains_paths, Problem.d_max) # indices of vars
+    inds_z, q_bits_z = z_indices(Problem.trains_paths, Problem.d_max) # indices of auxiliary vars.
 
     inds1 = np.concatenate([inds, inds_z])
 
@@ -642,15 +649,13 @@ def make_Q(d_max, p_sum, p_pair, p_qubic, trains_timing, trains_paths):
 
     # add soft panalties (objective)
     for k in range(q_bits):
-        Q[k][k] += penalty(k, inds, d_max, trains_timing)
+        Q[k][k] += penalty(k, inds, Problem)
     # quadratic headway, minimal stay, single_line, circulation, switch
     for k in range(q_bits):
         for l in range(q_bits):
-            Q[k][l] += get_coupling(k, l, inds, p_sum, p_pair, trains_paths, trains_timing)
+            Q[k][l] += get_coupling(k, l, inds, Problem)
     # qubic track occupancy condition.
     for k in range(q_bits + q_bits_z):
         for l in range(q_bits + q_bits_z):
-            Q[k][l] += get_z_coupling(
-                k, l, inds1, p_pair, p_qubic, trains_timing, trains_paths
-            )
+            Q[k][l] += get_z_coupling(k, l, inds1, Problem)
     return Q
