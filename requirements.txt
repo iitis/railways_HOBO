@@ -50,3 +50,4 @@ typing-extensions==4.2.0
 urllib3==1.26.9
 werkzeug==2.1.2
 pylint
+coverage
