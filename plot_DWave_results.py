@@ -1,6 +1,6 @@
 """ plotter of results of computaiton on the DWave"""
-import matplotlib.pyplot as plt
 import pickle
+import matplotlib.pyplot as plt
 from matplotlib import rc
 
 rc('text',usetex=True)
