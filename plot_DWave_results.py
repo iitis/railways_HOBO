@@ -54,17 +54,17 @@ for k, list_route in enumerate(list_route_full):
         title = "annealing t = 250 μs, 3996 runs, default"
 
         if i ==0:
-            ax[i].plot(non_feasible_css_mod, non_feasible_ens_mod, 'rs', label = 'D-Wave non-feasible solution')
+            ax[i].plot(non_feasible_css_mod, non_feasible_ens_mod, 'rs', label = 'D-Wave advantage non-feasible')
             if k == 0:
                 ax[i].plot(feasible_css, feasible_ens, 'rs')
-                ax[i].axhline(y =hybrid, color = 'g', label = 'Hybrid solver')
+                ax[i].axhline(y =hybrid, color = 'g', label = 'D-Wave hybrid solver')
                 if route == 'enlarged':
                     ax[i].axhline(y =-14.4, linestyle = '--', color = 'k',label = 'Ground energy')
                 else:
                     ax[i].axhline(y =-21.49,  linestyle = '--',  color = 'k',label = 'Ground energy')
             elif k ==1:
-                ax[i].plot(feasible_css, feasible_ens, 'go', label = 'D-Wave feasible solution')
-                ax[i].axhline(y =hybrid, color = 'g', label = 'Ground energy and Hybrid solver')
+                ax[i].plot(feasible_css, feasible_ens, 'go', label = 'D-Wave advantage feasible')
+                ax[i].axhline(y =hybrid, color = 'g', label = 'Ground energy and D-Wave hybrid solver')
             ax[i].set_xticks(non_feasible_css)
             ax[i].set_title(f'{grafitti(route)}')
             
@@ -80,7 +80,7 @@ for k, list_route in enumerate(list_route_full):
                 ax[i].plot(feasible_css, feasible_ens, 'rs')
             elif k ==1:
                 ax[i].plot(feasible_css, feasible_ens, 'go')
-            # ax[i].plot(feasible_css, feasible_ens, 'rs')
+
             ax[i].set_xticks(non_feasible_css)
             ax[i].set_title(f'{grafitti(route)}')
             ax[i].axhline(y =hybrid, color = 'g')
@@ -88,7 +88,7 @@ for k, list_route in enumerate(list_route_full):
 
 
     fig.text(0.005, 0.42, 'Minimum energy', va='center', rotation='vertical')
-    fig.legend(title = 'Annealing time = $250$ $\mu$$s$, $3996$ reads', loc='upper center',  borderaxespad=0.5, ncol=2, title_fontsize = 9, fontsize = 9)
+    fig.legend(title = 'Annealing time = $250$ $\mu$$s$, $3996$ reads', loc='upper center',  borderaxespad=0.5, ncol=2, title_fontsize = 8, fontsize = 8)
 
     fig.tight_layout()
     fig.subplots_adjust(top=0.68)
