@@ -31,11 +31,11 @@ def method_marker(method):
     """ mark methods for output file"""
     if method == None:
         return ""
-    if method == "enlarged":
+    if method == "enlarged": # -Feasible: 14.4
         return "_e"
     if method == "rerouted":
         return "_r"
-    if method == "5trains":
+    if method == "5trains": # -Feasible: 21.4
         return "_5t"
 
 
@@ -64,12 +64,11 @@ def hybrid_anneal(method):
 
 if __name__ == "__main__":
 
-    annealing = 'hybrid'
-    annealing == 'simulated'
+    annealing = 'simulated'
     num_reads = 3996
     annealing_time = 250
 
-    for method in [None]:
+    for method in ['rerouted']:
 
         #simulated annealing!!!!
         if annealing == 'simulated':
@@ -84,7 +83,7 @@ if __name__ == "__main__":
             sdf = sampleset.to_serializable()
 
             f = method_marker(method)
-
+            print(f)
             with open("files/Qfile_complete_sol_sim-anneal"+f, 'wb') as handle:
                 pickle.dump(sdf, handle)
             with open("files/Qfile_samples_sol_sim-anneal"+f, 'wb') as handle:
