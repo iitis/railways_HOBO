@@ -59,12 +59,12 @@ for k, list_route in enumerate(list_route_full):
                 ax[i].plot(feasible_css, feasible_ens, 'rs')
                 ax[i].axhline(y =hybrid, color = 'g', label = 'Hybrid solver')
                 if route == 'enlarged':
-                    ax[i].axhline(y =-14.4, linestyle = '--', color = 'g',label = 'Ground state')
+                    ax[i].axhline(y =-14.4, linestyle = '--', color = 'k',label = 'Ground energy')
                 else:
-                    ax[i].axhline(y =-21.49,  linestyle = '--',  color = 'g',label = 'Ground state')
+                    ax[i].axhline(y =-21.49,  linestyle = '--',  color = 'k',label = 'Ground energy')
             elif k ==1:
                 ax[i].plot(feasible_css, feasible_ens, 'go', label = 'D-Wave feasible solution')
-                ax[i].axhline(y =hybrid, color = 'g', label = 'Ground state and Hybrid solver')
+                ax[i].axhline(y =hybrid, color = 'g', label = 'Ground energy and Hybrid solver')
             ax[i].set_xticks(non_feasible_css)
             ax[i].set_title(f'{grafitti(route)}')
             
@@ -74,9 +74,9 @@ for k, list_route in enumerate(list_route_full):
                 ax[i].plot(feasible_css, feasible_ens, 'rs')
                 ax[i].axhline(y =hybrid, color = 'g')
                 if route == 'enlarged':
-                    ax[i].axhline(y =-14.4, linestyle = '--', color = 'g')
+                    ax[i].axhline(y =-14.4, linestyle = '--', color = 'k')
                 else:
-                    ax[i].axhline(y =-21.49,  linestyle = '--',  color = 'g')
+                    ax[i].axhline(y =-21.49,  linestyle = '--',  color = 'k')
                 ax[i].plot(feasible_css, feasible_ens, 'rs')
             elif k ==1:
                 ax[i].plot(feasible_css, feasible_ens, 'go')
