@@ -14,7 +14,7 @@ import dimod
 def anneal_solutuon(method = None):
     if method == '5trains':
         Q_init = np.load('files/Qfile_5_trains.npz')
-    elif method == 'reroute':
+    elif method == 'rerouted':
         Q_init = np.load('files/Qfile_r.npz')
     elif method == 'enlarged':
         Q_init = np.load('files/Qfile_enlarged.npz')
@@ -64,11 +64,11 @@ def hybrid_anneal(method):
 
 if __name__ == "__main__":
 
-    annealing = 'simulated'
+    annealing = 'quantum'
     num_reads = 3996
     annealing_time = 250
 
-    for method in ['rerouted']:
+    for method in ['enlarged', '5trains', 'rerouted', None]:
 
         #simulated annealing!!!!
         if annealing == 'simulated':
@@ -128,11 +128,12 @@ if __name__ == "__main__":
                 sdf = sampleset.to_serializable()
 
                 f = method_marker(method)
-
-                fname = "files/dwave_data/Qfile_complete_sol_real-anneal_numread{}_antime{}_chainst{}" + f
-                with open(fname.format(num_reads, annealing_time,chain_strength), 'wb') as handle:
+                
+                fname_comp = "files/dwave_data/Qfile_complete_sol_real-anneal_numread{}_antime{}_chainst{}" + f
+                fname_samp = "files/dwave_data/Qfile_samples_sol_real-anneal_numread{}_antime{}_chainst{}" + f
+                with open(fname_comp.format(num_reads, annealing_time,chain_strength), 'wb') as handle:
                     pickle.dump(sdf, handle)
-                with open(fname.format(num_reads, annealing_time,chain_strength), 'wb') as handle:
+                with open(fname_samp.format(num_reads, annealing_time,chain_strength), 'wb') as handle:
                     pickle.dump(results, handle)
 
 
