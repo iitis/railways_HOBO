@@ -1,4 +1,5 @@
 """tests on examples concerning particular scenarios """
+import pytest
 import numpy as np
 from railway_solvers import make_Qubo, energy
 
@@ -283,3 +284,32 @@ def test_Qmat_on_DWave_rerouted():
     Q_r = make_Qubo(Problem)
 
     assert np.array_equal(Q_r, np.load("test/files/Qfile_r.npz")["Q"])
+
+
+def test_Qmat_on_DWave_enlarged():
+    """
+    particular problem solved on the DWave
+
+    rerouted
+    """
+
+    from inputs.DW_example import DWave_problem_enlarged
+
+    Problem = DWave_problem_enlarged()
+
+    Q = make_Qubo(Problem)
+
+    assert np.array_equal(Q, np.load("test/files/Qfile_enlarged.npz")["Q"])
+
+    # additional tests on already recorded solution form Hetropolis-Hastings
+    sol = np.load("test/files/solutions_enlarged.npz")
+
+    offset = -6*2.5
+    objective = 0.6
+    assert energy(sol, Q) == pytest.approx(offset + objective)
+
+    Problem_feasibility = DWave_problem_enlarged(soft_constrains = False)
+
+    Q_f = make_Qubo(Problem_feasibility)
+
+    assert energy(sol, Q_f) == pytest.approx(offset)

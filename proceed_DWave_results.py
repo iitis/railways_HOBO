@@ -44,6 +44,8 @@ def method_marker(method):
         return ""
     if method == "rerouted":
         return "_r"
+    if method == "enlarged":
+        return "_e"
     if method == "5trains":
         return "_5t"
 
@@ -96,7 +98,6 @@ def print_trains_timings(Problem_original, Q_only_hard, f_Q, method):
 
     solution = solutions[0]
     print("from v Q vT = ", energy(solution, Q))
-    print("!!!!!!!!!!!!!!!!  HARD = ", energy(solution, Q_only_hard))
     visualise_Qubo_solution(solution, Problem_original)
 
 
@@ -115,21 +116,25 @@ if __name__ == "__main__":
 
     #####   Q matrix generation #########
 
-    from inputs.DW_example import DWave_problem, Problem_of_5_trains
+    from inputs.DW_example import DWave_problem, DWave_problem_enlarged, Problem_of_5_trains
     Problem_original = DWave_problem(rerouted = False)
     Problem_rerouted = DWave_problem(rerouted = True)
+    Problem_enlarged= DWave_problem_enlarged()
     Problem_large = Problem_of_5_trains()
 
     f1_Q = 'files/Qfile.npz'
     f2_Q = 'files/Qfile_r.npz'
-    f3_Q = 'files/Qfile_5_trains.npz'
+    f3_Q = 'files/Qfile_enlarged.npz'
+    f4_Q = 'files/Qfile_5_trains.npz'
 
     print("original")
     save_Qmat(Problem_original, f1_Q)
     print("rerouted")
     save_Qmat(Problem_rerouted, f2_Q)
+    print("enlarged")
+    save_Qmat(Problem_enlarged, f3_Q)
     print("5trains")
-    save_Qmat(Problem_large, f3_Q)
+    save_Qmat(Problem_large, f4_Q)
 
 
     Problem_original_fesibility = DWave_problem(rerouted = False, soft_constrains = False)

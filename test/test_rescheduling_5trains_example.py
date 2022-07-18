@@ -22,3 +22,10 @@ def test_5_trains_all_Js():
     offset = -(2*3+1+2)*2.5
     objective = 1.01
     assert energy(sol, Q) == pytest.approx(offset + objective)
+
+    # feasibility check
+    Problem_feasibility = Problem_of_5_trains(soft_constrains = False)
+
+    Q_f = make_Qubo(Problem_feasibility)
+
+    assert energy(sol, Q_f) == pytest.approx(offset)

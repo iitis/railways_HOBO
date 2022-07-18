@@ -86,6 +86,67 @@ class DWave_problem():
         self.d_max = 10
 
 
+class DWave_problem_enlarged():
+
+    """
+
+                                        <- j3  j4
+    ..........c........................c....c......
+     [ S1 ] .  .                        .  .   [ S2 ]
+    .......c....c........................c.........
+    j1 ->
+    j2 ->
+
+
+
+    S1, S2 - stations
+    j1, j2, j3 - trains
+    .....  - track
+    c - switch
+    """
+    def __init__(self, soft_constrains = True):
+
+        self.taus = {"pass": {"j1_S1_S2": 4, "j2_S1_S2": 8, "j3_S2_S1": 8, "j4_S2_S1": 8},
+                     "headway": {"j1_j2_S1_S2": 2, "j2_j1_S1_S2": 6, "j3_j4_S2_S1": 2, "j4_j3_S2_S1": 2},
+                     "stop": {"j1_S2": 1, "j2_S2": 1},
+                     "res": 1
+                    }
+
+        if soft_constrains:
+
+            self.trains_timing = {"tau": self.taus,
+                     "initial_conditions": {"j1_S1": 4, "j2_S1": 1, "j3_S2": 8, "j4_S2": 9},
+                     "penalty_weights": {"j1_S1": 2, "j2_S1": 1, "j3_S2": 1, "j4_S2": 1}
+                     }
+        else:
+
+            self.trains_timing = {"tau": self.taus,
+                     "initial_conditions": {"j1_S1": 4, "j2_S1": 1, "j3_S2": 8, "j4_S2": 9},
+                     "penalty_weights": {"j1_S1": 0, "j2_S1": 0, "j3_S2": 0, "j4_S2": 0}
+                     }
+
+
+        self.trains_paths = {
+            "skip_station": {
+                "j3": "S1",  "j4": "S1",  # we do not count train j3 leaving S1
+            },
+            "Paths": {"j1": ["S1", "S2"], "j2": ["S1", "S2"], "j3": ["S2", "S1"], "j4": ["S2", "S1"]},
+            "J": ["j1", "j2", "j3", "j4"],
+            "Jd": {"S1": {"S2": [["j1", "j2"]]}, "S2": {"S1": [["j3", "j4"]]}},
+            "Josingle": {},
+            "Jround": {},
+            "Jtrack": {"S2": [["j1", "j2"]]},
+            "Jswitch": {},
+            "add_swithes_at_s": ["S2"]  # additional τ(res.)(j, "B") in Eq. 18
+            }
+
+        self.p_sum = 2.5
+        self.p_pair = 1.25
+        self.p_qubic = 2.1
+        self.d_max = 10
+
+
+
 class Problem_of_5_trains():
     """
     21,22,23,24,25  - trains

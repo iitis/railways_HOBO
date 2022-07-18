@@ -16,6 +16,8 @@ def anneal_solutuon(method = None):
         Q_init = np.load('files/Qfile_5_trains.npz')
     elif method == 'reroute':
         Q_init = np.load('files/Qfile_r.npz')
+    elif method == 'enlarged':
+        Q_init = np.load('files/Qfile_enlarged.npz')
     else:
         Q_init = np.load('files/Qfile.npz')
 
@@ -29,6 +31,8 @@ def method_marker(method):
     """ mark methods for output file"""
     if method == None:
         return ""
+    if method == "enlarged":
+        return "_e"
     if method == "rerouted":
         return "_r"
     if method == "5trains":
