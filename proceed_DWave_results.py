@@ -136,12 +136,23 @@ if __name__ == "__main__":
     print("5trains")
     save_Qmat(Problem_large, f4_Q)
 
-
-    Problem_original_fesibility = DWave_problem(rerouted = False, soft_constrains = False)
-    Problem_rerouted_fesibility = DWave_problem(rerouted = True, soft_constrains = False)
-    Q1 = make_Qubo(Problem_original_fesibility)
-    Q2 = make_Qubo(Problem_rerouted_fesibility)
     print("  >>>>>>>>>>>>>>>>>  original problem  <<<<<<<<<<<<<<<<<<<")
+    Problem_original_fesibility = DWave_problem(rerouted = False, soft_constrains = False)
+    Q1 = make_Qubo(Problem_original_fesibility)
     print_trains_timings(Problem_original, Q1, f1_Q, None)
+
     print("  >>>>>>>>>>>>>>>>>  rerouted problem  <<<<<<<<<<<<<<<<<<<")
+    Problem_rerouted_fesibility = DWave_problem(rerouted = True, soft_constrains = False)
+    Q2 = make_Qubo(Problem_rerouted_fesibility)
     print_trains_timings(Problem_rerouted, Q2, f2_Q, "rerouted")
+
+    print("  >>>>>>>>>>>>>>>>>  enlarged problem  <<<<<<<<<<<<<<<<<<<")
+    Problem_enlarged_fesibility = DWave_problem_enlarged(soft_constrains = False)
+    Q3 = make_Qubo(Problem_enlarged_fesibility)
+    print_trains_timings(Problem_enlarged, Q3, f3_Q, "enlarged")
+
+
+    print("  >>>>>>>>>>>>>>>>>  5 trains problem  <<<<<<<<<<<<<<<<<<<")
+    Problem_5t_fesibility = Problem_of_5_trains(soft_constrains = False)
+    Q4 = make_Qubo(Problem_5t_fesibility)
+    print_trains_timings(Problem_5trains, Q4, f4_Q, "5trains")
