@@ -12,7 +12,9 @@ import dimod
 
 
 def anneal_solutuon(method = None):
-    if method == 'reroute':
+    if method == '5trains':
+        Q_init = np.load('files/Qfile_5_trains.npz')
+    elif method == 'reroute':
         Q_init = np.load('files/Qfile_r.npz')
     else:
         Q_init = np.load('files/Qfile.npz')
@@ -21,6 +23,16 @@ def anneal_solutuon(method = None):
     model = dimod.BinaryQuadraticModel.from_numpy_matrix(Q)
     qubo, offset = model.to_qubo()
     return qubo
+
+
+def method_marker(method):
+    """ mark methods for output file"""
+    if method == None:
+        return ""
+    if method == "rerouted":
+        return "_r"
+    if method == "5trains":
+        return "_5t"
 
 
 ############################
@@ -49,6 +61,7 @@ def hybrid_anneal(method):
 if __name__ == "__main__":
 
     annealing = 'hybrid'
+    annealing == 'simulated'
     num_reads = 3996
     annealing_time = 250
 
@@ -56,10 +69,8 @@ if __name__ == "__main__":
 
         #simulated annealing!!!!
         if annealing == 'simulated':
-            if method == 'reroute':
-                sampleset = sim_anneal('reroute')
-            else:
-                sampleset = sim_anneal(None)
+
+            sampleset = sim_anneal(method)
 
             results=[]
             for datum in sampleset.data():
@@ -67,24 +78,19 @@ if __name__ == "__main__":
                 results.append((x, datum.energy))
 
             sdf = sampleset.to_serializable()
-            if method == 'reroute':
-                with open("files/Qfile_complete_sol_sim-anneal_r", 'wb') as handle:
-                    pickle.dump(sdf, handle)
-                with open("files/Qfile_samples_sol_sim-anneal_r", 'wb') as handle:
-                    pickle.dump(results, handle)
 
-            else:
-                with open("files/Qfile_complete_sol_sim-anneal", 'wb') as handle:
-                    pickle.dump(sdf, handle)
-                with open("files/Qfile_samples_sol_sim-anneal", 'wb') as handle:
-                    pickle.dump(results, handle)
+            f = method_marker(method)
+
+            with open("files/Qfile_complete_sol_sim-anneal"+f, 'wb') as handle:
+                pickle.dump(sdf, handle)
+            with open("files/Qfile_samples_sol_sim-anneal"+f, 'wb') as handle:
+                pickle.dump(results, handle)
+
 
         #hybrid annealing!!!
         elif annealing == 'hybrid':
-            if method == 'reroute':
-                sampleset = hybrid_anneal('reroute')
-            else:
-                sampleset = hybrid_anneal(None)
+
+            sampleset = hybrid_anneal(method)
 
             results = []
             for datum in sampleset.data():
@@ -92,17 +98,14 @@ if __name__ == "__main__":
                 results.append((x, datum.energy))
 
             sdf = sampleset.to_serializable()
-            if method == 'reroute':
-                with open("files/hybrid_data/Qfile_complete_sol_hybrid-anneal_r", 'wb') as handle:
-                    pickle.dump(sdf, handle)
-                with open("files/hybrid_data/Qfile_samples_sol_hybrid-anneal_r", 'wb') as handle:
-                    pickle.dump(results, handle)
 
-            else:
-                with open("files/hybrid_data/Qfile_complete_sol_hybrid-anneal", 'wb') as handle:
-                    pickle.dump(sdf, handle)
-                with open("files/hybrid_data/Qfile_samples_sol_hybrid-anneal", 'wb') as handle:
-                    pickle.dump(results, handle)
+            f = method_marker(method)
+
+            with open("files/hybrid_data/Qfile_complete_sol_hybrid-anneal"+f, 'wb') as handle:
+                pickle.dump(sdf, handle)
+            with open("files/hybrid_data/Qfile_samples_sol_hybrid-anneal"+f, 'wb') as handle:
+                pickle.dump(results, handle)
+
 
             print('Hybrid solver energy {}'.format(results))
 
@@ -112,10 +115,7 @@ if __name__ == "__main__":
         elif annealing == 'quantum':
             for chain_strength in [3,3.5,4,4.5]:
 
-                if method == 'reroute':
-                    sampleset = real_anneal('reroute', num_reads, annealing_time, chain_strength)
-                else:
-                    sampleset = real_anneal(None, num_reads, annealing_time, chain_strength)
+                sampleset = real_anneal(method, num_reads, annealing_time, chain_strength)
 
                 results=[]
                 for datum in sampleset.data():
@@ -123,17 +123,15 @@ if __name__ == "__main__":
                     results.append((x, datum.energy))
 
                 sdf = sampleset.to_serializable()
-                if method == 'reroute':
-                    with open("files/dwave_data/Qfile_complete_sol_real-anneal_numread{}_antime{}_chainst{}_r".format(num_reads, annealing_time,chain_strength), 'wb') as handle:
-                        pickle.dump(sdf, handle)
-                    with open("files/dwave_data/Qfile_samples_sol_real-anneal_numread{}_antime{}_chainst{}_r".format(num_reads, annealing_time,chain_strength), 'wb') as handle:
-                        pickle.dump(results, handle)
 
-                else:
-                    with open("files/dwave_data/Qfile_complete_sol_real-anneal_numread{}_antime{}_chainst{}".format(num_reads,annealing_time,chain_strength), 'wb') as handle:
-                        pickle.dump(sdf, handle)
-                    with open("files/dwave_data/Qfile_samples_sol_real-anneal_numread{}_antime{}_chainst{}".format(num_reads,annealing_time,chain_strength), 'wb') as handle:
-                        pickle.dump(results, handle)
+                f = method_marker(method)
+
+                fname = "files/dwave_data/Qfile_complete_sol_real-anneal_numread{}_antime{}_chainst{}" + f
+                with open(fname.format(num_reads, annealing_time,chain_strength), 'wb') as handle:
+                    pickle.dump(sdf, handle)
+                with open(fname.format(num_reads, annealing_time,chain_strength), 'wb') as handle:
+                    pickle.dump(results, handle)
+
 
                 print('Energy {} with chain strength {} run'.format(sampleset.first, chain_strength))
                 # print('Embedding:')
