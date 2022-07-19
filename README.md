@@ -21,7 +21,7 @@ conda deactivate
 
 ## Results reproduction
 
-To reproduce the `Figure.[6]` in the article one need to run
+To reproduce the `Figure.[6]` and `Figure.[7]` in the article one need to run
 
 ```
 python plot_DWave_results.py
@@ -30,10 +30,10 @@ the figures are saved in the `plots` folder.
 
 ## Generating new data
 
-Generating data basically constains the following steps
+Generating data contains the following steps
 
 ### Generating Q-matrix:
-To generate the `Q-matrix` one need to run
+To generate the `Q-matrix` one needs to run
 
 ```
 python proceed_DWave_results.py
@@ -43,33 +43,47 @@ the matrix is saved on files for
 
 
 (1) `files/Qfile.npz` for **default setting** and,
-(2) `files/Qfile_r.npz` for **rerouted setting**.
+(2) `files/Qfile_r.npz` for **rerouted setting**,
+(3) `files/Qfile_enlarged.npz` for **4 trains, 2 stations** model and,
+(4) `files/Qfile_5_trains.npz` for **5 trains, 5 stations** model.
 
 ### Getting a solution:
 
-To solve the Quadratic Unconstrained Binary Optimization problem on D-Wave's Advantage `QPU` and `hybrid solver` or `simulated annealer` one need to do the following
+To solve the Quadratic Unconstrained Binary Optimization problem on D-Wave's Advantage `QPU` and `hybrid solver` or `simulated annealer` one needs to do the following
 
 ```
-python Qfile_solve.npy 'annealer_type' 'num_reads' 'annealing_time'
+python Qfile_solve.npy 'annealer_type' 'num_reads' 'annealing_time' 'method'
 ```
 
-For more details on the solvers see: [https://www.dwavesys.com/media/m2xbmlhs/14-1048a-a_d-wave_hybrid_solver_service_plus_advantage_technology_update.pdf](https://www.dwavesys.com/media/m2xbmlhs/14-1048a-a_d-wave_hybrid_solver_service_plus_advantage_technology_update.pdf). The data produced in the paper using the following specifications
+For more details on the solvers see: [https://www.dwavesys.com/media/m2xbmlhs/14-1048a-a_d-wave_hybrid_solver_service_plus_advantage_technology_update.pdf](https://www.dwavesys.com/media/m2xbmlhs/14-1048a-a_d-wave_hybrid_solver_service_plus_advantage_technology_update.pdf).
+The `'method'` denotes the `model` we want to consider for solving. The available `models` are as follows
+
+```
+'default'  --> For default setting,
+'rerouted' --> For rerouted setting,
+'enlarged' --> For 4 trains, 2 stations setting,
+'5trains'  --> For 5 trains, 5 stations setting.
+```
+
+The data produced in the paper using the following specifications
 
 
 ```
-python Qfile_solve.npy 'simulated' 3996 250
+python Qfile_solve.npy 'simulated' 0 0 'default'
 ```
-for **simulated annealer** and
+for **simulated annealer** with **default** model and
 
 ```
-python Qfile_solve.npy 'quantum' 3996 250
+python Qfile_solve.npy 'quantum' 3996 250 'enlarged'
 ```
-for **quantum annealer** and finally
+for **quantum annealer** with **4 trains, 2 stations** model and finally
 
 ```
-python Qfile_solve.npy 'hybrid' 3996 250
+python Qfile_solve.npy 'hybrid' 0 0 'rerouted'
 ```
-for **hybrid solver**.
+for **hybrid solver** with **rerouted** model.
+
+**NOTE:** For `'hybrid'` and `'simulated'` annealer the `annealing_time` and `num_reads` can be set arbitrarily.
 
 ## Saved Data
 
@@ -83,11 +97,11 @@ whereas the folder
 ```
 files/dwave_data
 ```
-constains the outcome for `simulated` and `quantum annealer`.
+contains the outcome for `simulated` and `quantum annealer`.
 
 ## Plotting
 
-One can simply run the follwing code the generate and save the plot (similar to `Figure.[6]` in the article)
+One can simply run the following code the generate and save the plot (similar to `Figure.[6]` and `Figure.[7]` in the article)
 
 ```
 python plot_DWave_results.py
