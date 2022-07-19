@@ -21,7 +21,7 @@ def grafitti(route):
 # annealing time = 250 μs
 # number of runs = 3996
 
-list_route_full = [["enlarged", "5trains"], ["rerouted", None ]]
+list_route_full = [["enlarged", "5trains"], [ None , "rerouted" ]]
 
 
 for k, list_route in enumerate(list_route_full):
