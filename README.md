@@ -97,7 +97,14 @@ whereas the folder
 ```
 files/dwave_data
 ```
-contains the outcome for `simulated` and `quantum annealer`.
+contains the outcome for `quantum annealer`.
+
+**NOTE:** For a particular `model` and for each annealing `run` two data files are saved in the following form
+
+```
+Qfile_complete.. --> Contains the whole D-Wave outcome, in the form of a dictionary,
+Qfile_samples.. --> Contains just the solution and its corresponding energy, in the form of a list.
+```
 
 ## Plotting
 
