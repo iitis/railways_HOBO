@@ -103,7 +103,7 @@ contains the outcome for `quantum annealer`.
 
 ```
 Qfile_complete.. --> Contains the whole D-Wave outcome, in the form of a dictionary,
-Qfile_samples.. --> Contains just the solution and its corresponding energy, in the form of a list.
+Qfile_samples..  --> Contains just the solution and its corresponding energy, in the form of a list.
 ```
 
 ## Plotting
