@@ -4,7 +4,6 @@ import neal
 import numpy as np
 from dwave.system import EmbeddingComposite, DWaveSampler, LeapHybridSampler
 import dimod
-<<<<<<< HEAD
 import sys
 import dwave.inspector
 
@@ -13,9 +12,6 @@ import dwave.inspector
 # from generate_ham_edge import *
 # from generate_ham_ilp import *
 # from ilp_helpers import *
-=======
-
->>>>>>> c47177d3671664d39a81c2327865ce43e5e99b3f
 
 def anneal_solutuon(method = None):
     if method == '5trains':
@@ -153,7 +149,6 @@ if len(sys.argv) < 2:
     print("You should put some inputs here. If you don't know, type '-h','--help' for instructions.")
     exit(0)
 
-<<<<<<< HEAD
 if sys.argv[1] in ["--help", "-h"]:
     print()
     print("Please specify:")
@@ -168,16 +163,6 @@ if sys.argv[1] in ["--help", "-h"]:
     print()
     print("NOTE: For 'simulated' and 'hybrid' annealer, the 'annealing_time' and 'number of reads' can be set arbitrarily")
     exit(0)
-=======
-                f = method_marker(method)
-
-                fname_comp = "files/dwave_data/Qfile_complete_sol_real-anneal_numread{}_antime{}_chainst{}" + f
-                fname_samp = "files/dwave_data/Qfile_samples_sol_real-anneal_numread{}_antime{}_chainst{}" + f
-                with open(fname_comp.format(num_reads, annealing_time,chain_strength), 'wb') as handle:
-                    pickle.dump(sdf, handle)
-                with open(fname_samp.format(num_reads, annealing_time,chain_strength), 'wb') as handle:
-                    pickle.dump(results, handle)
->>>>>>> c47177d3671664d39a81c2327865ce43e5e99b3f
 
 annealing = str(sys.argv[1]) #'quantum'
 num_reads = int(sys.argv[2]) #3996
