@@ -3,6 +3,8 @@
 import pickle as pk
 import os
 import numpy as np
+import dimod
+import pickle
 from railway_solvers import earliest_dep_time, indexing4qubo, make_Qubo, energy
 
 
@@ -13,6 +15,8 @@ def visualise_Qubo_solution(solution, Problem):
     inds, q_bits = indexing4qubo(trains_paths, Problem.d_max)
     print("n.o. x vars", q_bits)
     print("n.o. all var", np.size(solution))
+
+    print("------- output train timetable   ------")
 
     for i in range(q_bits):
         if solution[i] == 1:
@@ -31,11 +35,14 @@ def load_train_solution(f, i):
     print("css", i)
 
     output = pk.load(file)
-    solution = [sol[0] for sol in output]
+    sampleset =  dimod.SampleSet.from_serializable(output)
 
-    print("lowest energy")
-    print("from file =", output[0][1])
-    return solution
+    sorted = np.sort(sampleset.record, order="energy")
+    solutions = [sol[0] for sol in sorted]
+    energies = [sol[1] for sol in sorted]
+    occurences = [sol[2] for sol in sorted]
+
+    return solutions, energies, occurences
 
 
 def method_marker(method):
@@ -50,13 +57,15 @@ def method_marker(method):
         return "_5t"
 
 
-def no_feasible(solutions, Q_only_hard, offset):
-    k = 0
+def print_no_solutions(solutions, occurences, Q_only_hard, offset):
+    count = 0
     epsilon = 0.00001
-    for solution in solutions:
-        if energy(solution, Q_only_hard) <= offset + epsilon:
-            k = k + 1
-    return k
+    l = len(solutions)
+    for i in range(l):
+        if energy(solutions[i], Q_only_hard) <= offset + epsilon:
+            count = count + occurences[i]
+    print("n.o. solutions all = ", np.sum(occurences) , "distinct =", l, "feasible = ", count)
+
 
 def analyseQ(Q):
     s = np.size(Q,0)
@@ -67,11 +76,11 @@ def analyseQ(Q):
                 k = k+1
 
     print("n.o. qbits = ", s)
-    print("n.o. connections = ", k)
+    print("n.o. edges = ", k)
     full = (s-1)*s/2
-    print("n.o. connections, full graph", full)
-
-    print("fraction of full graph", k/full)
+    print("n.o. edges, full graph", full)
+    print("density vs. full graph", k/full)
+    print("...................")
 
 
 def print_trains_timings(Problem_original, Q_only_hard, f_Q, method, offset):
@@ -80,27 +89,27 @@ def print_trains_timings(Problem_original, Q_only_hard, f_Q, method, offset):
 
     method_f = method_marker(method)
 
-    print(" ##########   DW  results  ###################")
+
+    print(" DW  results ")
     Q = np.load(f_Q)["Q"]
     for i in [3, 3.5, 4, 4.5]:
-        f = f"files/dwave_data/Qfile_samples_sol_real-anneal_numread3996_antime250_chainst{i}"+method_f
-        solutions = load_train_solution(f, i)
-        print("n.o. feasible =", no_feasible(solutions, Q_only_hard, offset))
+        f = f"files/dwave_data/Qfile_complete_sol_real-anneal_numread3996_antime250_chainst{i}"+method_f
+        solutions, energies, occurences = load_train_solution(f, i)
+        print("lowest energy")
+        print("   from file = ", energies[0])
+        print("   from QUBO = ", energy(solutions[0], Q))
+        print_no_solutions(solutions, occurences, Q_only_hard, offset)
+        visualise_Qubo_solution(solutions[0], Problem_original)
 
-        solution = solutions[0]
-        print("from v Q vT = ", energy(solution, Q))
-        visualise_Qubo_solution(solution, Problem_original)
+    print(" Hybrid  solver results  ")
+    f = "files/hybrid_data/Qfile_complete_sol_hybrid-anneal"+method_f
 
-    print(" #########  Hybrid  solver results ############ ")
-    f = "files/hybrid_data/Qfile_samples_sol_hybrid-anneal"+method_f
-
-    solutions = load_train_solution(f, "")
-
-    print("n.o. feasible =", no_feasible(solutions, Q_only_hard, offset))
-
-    solution = solutions[0]
-    print("from v Q vT = ", energy(solution, Q))
-    visualise_Qubo_solution(solution, Problem_original)
+    solutions, energies, occurences = load_train_solution(f, "")
+    print("lowest energy")
+    print("   from file = ", energies[0])
+    print("   from QUBO = ", energy(solutions[0], Q))
+    print_no_solutions(solutions, occurences,Q_only_hard, offset)
+    visualise_Qubo_solution(solutions[0], Problem_original)
 
 
 
@@ -129,14 +138,17 @@ if __name__ == "__main__":
     f3_Q = 'files/Qfile_enlarged.npz'
     f4_Q = 'files/Qfile_5_trains.npz'
 
-    print("original")
+    print("graph analysis")
+    print("original problem ")
     save_Qmat(Problem_original, f1_Q)
-    print("rerouted")
+    print("rerouted problem")
     save_Qmat(Problem_rerouted, f2_Q)
-    print("enlarged")
+    print("enlarged problem")
     save_Qmat(Problem_enlarged, f3_Q)
-    print("5trains")
+    print("5 trains problem")
     save_Qmat(Problem_5trains, f4_Q)
+
+    print("output analysis")
 
     print("  >>>>>>>>>>>>>>>>>  original problem  <<<<<<<<<<<<<<<<<<<")
     Problem_original_fesibility = DWave_problem(rerouted = False, soft_constrains = False)

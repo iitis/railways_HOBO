@@ -4,11 +4,7 @@ import neal
 import numpy as np
 from dwave.system import EmbeddingComposite, DWaveSampler, LeapHybridSampler
 import dimod
-#import dwave.inspector
-# from edge_helpers import *
-# from generate_ham_edge import *
-# from generate_ham_ilp import *
-# from ilp_helpers import *
+
 
 
 def anneal_solutuon(method = None):
@@ -128,7 +124,7 @@ if __name__ == "__main__":
                 sdf = sampleset.to_serializable()
 
                 f = method_marker(method)
-                
+
                 fname_comp = "files/dwave_data/Qfile_complete_sol_real-anneal_numread{}_antime{}_chainst{}" + f
                 fname_samp = "files/dwave_data/Qfile_samples_sol_real-anneal_numread{}_antime{}_chainst{}" + f
                 with open(fname_comp.format(num_reads, annealing_time,chain_strength), 'wb') as handle:
