@@ -10,7 +10,7 @@ rc('font', family='serif')
 
 def grafitti(route):
     if route == 'enlarged':
-        return '6 trains, 2 stations'
+        return '4 trains, 2 stations'
     elif route == '5trains':
         return '5 trains, 5 stations'
     elif route == None:
@@ -67,7 +67,7 @@ for k, list_route in enumerate(list_route_full):
                 ax[i].axhline(y =hybrid, color = 'g', label = 'Ground energy and D-Wave hybrid solver')
             ax[i].set_xticks(non_feasible_css)
             ax[i].set_title(f'{grafitti(route)}')
-            
+
         else:
             ax[i].plot(non_feasible_css_mod, non_feasible_ens_mod, 'rs')
             if k == 0:
@@ -92,7 +92,7 @@ for k, list_route in enumerate(list_route_full):
 
     fig.tight_layout()
     fig.subplots_adjust(top=0.68)
-    if k == 0: 
+    if k == 0:
         fig.savefig("plots/DW_trains_larger.pdf")
     elif k ==1:
         fig.savefig("plots/DW_trains.pdf")
