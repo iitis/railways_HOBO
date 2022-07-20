@@ -117,6 +117,14 @@ python plot_DWave_results.py
 which are saved in `files/plots` folder.
 
 
+## Timetable and output analysis
+
+To get analysis of D-Wave output, and particular trains timetables run:
+
+```
+analyse_DWave_results.py
+```
+
 ## Citing this work
 
 K Domino, A Kundu, Ö Salehi, K Krawiec, Quadratic and Higher-Order Unconstrained Binary Optimization of Railway Rescheduling for Quantum Computing
