@@ -128,7 +128,7 @@ analyse_DWave_results.py
 ## Citing this work
 
 K Domino, A Kundu, Ö Salehi, K Krawiec, Quadratic and Higher-Order Unconstrained Binary Optimization of Railway Rescheduling for Quantum Computing
-Quantum Information Processing Vol. 21, Article number: 337 (2022) https://link.springer.com/article/10.1007/s11128-022-03670-y
+Quantum Information Processing, vol. 21, Article number: 337 (2022) https://link.springer.com/article/10.1007/s11128-022-03670-y
 
 The research was supported by:
 - the Foundation for Polish Science (FNP) under grant number TEAM NET POIR.04.04.00-00-17C1/18-00
