@@ -33,7 +33,7 @@ penaltymodel==1.0.2
 pip==21.2.4
 plucky==0.4.3
 pluggy==1.0.0
-py==1.11.0
+#py==1.11.0
 pydantic==1.9.1
 pyparsing==3.0.9
 pysocks==1.7.1
