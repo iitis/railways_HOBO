@@ -16,7 +16,7 @@ dwave-system==1.15.0
 dwave-tabu==0.4.5
 dwavebinarycsp==0.2.0
 fasteners==0.17.3
-flask==2.1.2
+flask==2.2.5
 homebase==1.0.1
 idna==3.3
 iniconfig==1.1.1
