@@ -54,7 +54,7 @@ dependencies:
     - packaging==21.3
     - pandas==1.4.2
     - penaltymodel==1.0.2
-    - pip==21.2.4
+    - pip==23.1.2
     - plucky==0.4.3
     - pluggy==1.0.0
     - py==1.11.0
