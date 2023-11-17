@@ -30,7 +30,7 @@ numpy==1.22.4
 packaging==21.3
 pandas==1.4.2
 penaltymodel==1.0.2
-pip==23.1.2
+pip==23.3
 plucky==0.4.3
 pluggy==1.0.0
 #py==1.11.0
@@ -47,7 +47,7 @@ setuptools==65.5.1
 six==1.16.0
 tomli==2.0.1
 typing-extensions==4.2.0
-urllib3==1.26.17
-werkzeug==2.2.3
+urllib3==1.26.18
+werkzeug==2.3.8
 pylint
 coverage
